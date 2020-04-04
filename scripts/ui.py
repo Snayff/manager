@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Type
-
+from typing import TYPE_CHECKING
 import pygame
+from pygame.rect import Rect
 from pygame_gui import UIManager
 from scripts.constants import BASE_WINDOW_WIDTH, BASE_WINDOW_HEIGHT
 from scripts.ui_elements.overview import OverviewScreen
@@ -42,7 +42,7 @@ class _UIManager:
 
         logging.info(f"UIManager initialised.")
 
-        overview = OverviewScreen(self._gui)
+        overview = OverviewScreen(self._gui, Rect((0, 0), (BASE_WINDOW_WIDTH, BASE_WINDOW_HEIGHT)))
 
     def update(self, delta_time: float):
         """

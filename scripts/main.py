@@ -9,10 +9,8 @@ import sys
 import time
 import traceback
 import pygame
+import snecs
 from typing import TYPE_CHECKING, Type
-
-import snecs as snecs
-
 from scripts.constants import VERSION, EXIT
 from scripts.state import state
 from scripts.ui import ui
