@@ -1,85 +1,100 @@
 from __future__ import annotations
 
-import logging
 from typing import TYPE_CHECKING
+
 import pygame
 from pygame.rect import Rect
-from pygame_gui import UIManager
-from scripts.constants import BASE_WINDOW_WIDTH, BASE_WINDOW_HEIGHT
-from scripts.ui_elements.overview import OverviewScreen
+from scripts.constants import BASE_WINDOW_HEIGHT, BASE_WINDOW_WIDTH
+from scripts.stores.ui_data import ui_data
 
 if TYPE_CHECKING:
-    from typing import Union, Optional, Any, Tuple, Dict, List
+    pass
 
 
-class _UIManager:
+def set_focused_element(element_name: str):
     """
-    Manage the UI, such as windows, resource bars etc
+    Set the element currently being used/interacted with
     """
-
-    def __init__(self):
-        self.debug_font = None
-
-        # first action needs to be to init pygame.
-        pygame.init()
-
-        #  set the display
-        self._desired_width = BASE_WINDOW_WIDTH
-        self._desired_height = BASE_WINDOW_HEIGHT
-        self._screen_scaling_mod_x = self._desired_width // BASE_WINDOW_WIDTH
-        self._screen_scaling_mod_y = self._desired_height // BASE_WINDOW_HEIGHT
-        self._window: pygame.display = pygame.display.set_mode((self._desired_width, self._desired_height))
-        self._main_surface: pygame.Surface = pygame.Surface((BASE_WINDOW_WIDTH,
-                                                            BASE_WINDOW_HEIGHT), pygame.SRCALPHA)
-        # hold ref to all current elements
-        self._elements = {}
-
-        # now that the display is configured  init the pygame_gui
-        self._gui = UIManager((BASE_WINDOW_WIDTH, BASE_WINDOW_HEIGHT), "themes.json")
-
-        # process config
-        pygame.display.set_caption("TBC - Manager")
-
-        logging.info(f"UIManager initialised.")
-
-        overview = OverviewScreen(self._gui, Rect((0, 0), (BASE_WINDOW_WIDTH, BASE_WINDOW_HEIGHT)))
-
-    def update(self, delta_time: float):
-        """
-        Update all ui_manager elements
-        """
-        self._gui.update(delta_time)
-
-    def process_ui_events(self, event):
-        """
-        Process input events
-        """
-        self._gui.process_events(event)
-
-        # make sure it is a pgui event
-        if event.type == pygame.USEREVENT:
-            elements = self._elements
-
-            for element in elements.values():
-                element.handle_events(event)
-
-    def draw(self):
-        """
-        Draw the UI.
-        """
-        main_surface = self._main_surface
-
-        # clear previous frame
-        main_surface.fill((0, 0, 0))
-
-        self._gui.draw_ui(main_surface)
-
-        # resize the surface to the desired resolution
-        scaled_surface = pygame.transform.scale(main_surface, (self._desired_width, self._desired_height))
-        self._window.blit(scaled_surface, (0, 0))
-
-        # update the display
-        pygame.display.flip()  # make sure to do this as the last drawing element in a frame
+    ui_data.focused_element_name = element_name
+    ui_data.focused_element_changed = True
 
 
-ui = _UIManager()
+def show_overview_screen():
+    """
+    Show the overview screen, creating if necessary.
+    """
+    # is it init'd?
+    if "overview" not in ui_data.elements:
+        from scripts.ui_elements.overview import OverviewScreen
+        overview = OverviewScreen(ui_data.gui, Rect((0, 0), (BASE_WINDOW_WIDTH, BASE_WINDOW_HEIGHT)))
+        ui_data.new_elements["overview"] = overview
+
+    set_focused_element("overview")
+
+
+def show_council_screen():
+    """
+    Show the Council screen, creating if necessary.
+    """
+    if "council" not in ui_data.elements:
+        from scripts.ui_elements.council import CouncilScreen
+        council = CouncilScreen(ui_data.gui, Rect((0, 0), (BASE_WINDOW_WIDTH, BASE_WINDOW_HEIGHT)))
+        ui_data.new_elements["council"] = council
+
+    set_focused_element("council")
+
+
+def draw():
+    """
+    Draw the UI.
+    """
+    main_surface = ui_data.main_surface
+
+    # clear previous frame
+    main_surface.fill((0, 0, 0))
+
+    ui_data.gui.draw_ui(main_surface)
+
+    # resize the surface to the desired resolution
+    scaled_surface = pygame.transform.scale(main_surface, (ui_data.desired_width, ui_data.desired_height))
+    ui_data.window.blit(scaled_surface, (0, 0))
+
+    # update the display
+    pygame.display.flip()  # make sure to do this as the last drawing element in a frame
+
+
+def process_ui_event(event: pygame.event.Event):
+    """
+    Process input events
+    """
+    ui_data.gui.process_events(event)
+
+    # make sure it is a pgui event
+    if event.type == pygame.USEREVENT:
+        elements = ui_data.elements
+
+        for element in elements.values():
+            element.handle_event(event)
+
+
+def update(delta_time: float):
+    """
+    Update all ui_data elements
+    """
+    ui_data.gui.update(delta_time)
+
+    # kill everything that isnt in the focused screen
+    if ui_data.focused_element_changed:
+        elements = ui_data.elements
+        for name, element in elements.items():
+            if name != ui_data.focused_element_name:
+                element.kill()
+
+    # copy newly created elements to the main element list
+    if ui_data.new_elements:
+        for key, value in ui_data.new_elements.items():
+            ui_data.elements[key] = value
+
+        # all copied, clear dict
+        ui_data.new_elements = {}
+

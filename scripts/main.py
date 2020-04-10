@@ -11,9 +11,9 @@ import traceback
 import pygame
 import snecs
 from typing import TYPE_CHECKING, Type
+from scripts import state, ui, world
+from scripts.components import Demographic, Details, IsPlayerControlled, Land, Lands, Population
 from scripts.constants import VERSION, EXIT
-from scripts.state import state
-from scripts.ui import ui
 
 if TYPE_CHECKING:
     from typing import Union, Optional, Any, Tuple, Dict, List
@@ -30,6 +30,7 @@ def main():
     # TODO - set to turn off for production builds
     profiler = create_profiler()
 
+    initialise_game()
 
     # run the game
     try:
@@ -59,6 +60,7 @@ def game_loop():
     """
     The core game loop, handling input, rendering and logic.
     """
+    ui.show_overview_screen()
 
     while not state.get_current() == EXIT:
 
@@ -70,16 +72,25 @@ def game_loop():
 
         # update based on input events
         for event in pygame.event.get():
+            ui.process_ui_event(event)
 
-            ui.process_ui_events(event)
-
-        # allow everything to update in response to new state
+        # allow everything to update in response to new state_data
         # processors.process_all(delta_time)
         ui.update(delta_time)
         state.update_clock()
 
-        # show the new state
+        # show the new state_data
         ui.draw()
+
+
+def initialise_game():
+    components = [
+        IsPlayerControlled(),
+        Details("My Kingdom"),
+        Population([Demographic("goblin", 100, 2)]),
+        Lands([Land("homeland", "small", "muddy", [])])
+    ]
+    player_kingdom = world.create_entity(components)
 
 
 def initialise_logging():
@@ -154,8 +165,6 @@ def dump_profiling_data(profiler):
     out_stream = open("logs/profiling/" + date_and_time.strftime("%Y%m%d@%H%M") + "_" + VERSION + ".profile", "w")
     ps = pstats.Stats("logs/profiling/profile.dump", stream=out_stream)
     ps.strip_dirs().sort_stats("cumulative").print_stats()
-
-
 
 
 if __name__ == "__main__":  # prevents being run from other modules
