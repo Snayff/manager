@@ -60,7 +60,7 @@ def game_loop():
     """
     The core game loop, handling input, rendering and logic.
     """
-    ui.show_overview_screen()
+    ui.swap_to_overview_screen()
 
     while not state.get_current() == EXIT:
 
@@ -124,7 +124,7 @@ def initialise_logging():
     logging.basicConfig(filename=log_file_name, filemode=file_mode, level=log_level, format=log_format)
 
     # format into uk time
-    logging.Formatter.converter = time.gmtime()
+    logging.Formatter.converter = time.gmtime
 
 
 def create_profiler():

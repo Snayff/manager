@@ -28,19 +28,20 @@ class _UIDataStore:
         self.window: pygame.display = pygame.display.set_mode((self.desired_width, self.desired_height))
         self.main_surface: pygame.Surface = pygame.Surface((BASE_WINDOW_WIDTH,
                                                             BASE_WINDOW_HEIGHT), pygame.SRCALPHA)
+
         # hold ref to all current elements
         self.elements: Dict[str, Screen] = {}
         self.new_elements: Dict[str, Screen] = {}
-        self.focused_element_name = ""
-        self.focused_element_changed = False
+        self.focused_element_name: str = ""
+        self.element_keys_to_delete: List[Optional[str]] = []
 
         # now that the display is configured  init the pygame_gui
         self.gui = UIManager((BASE_WINDOW_WIDTH, BASE_WINDOW_HEIGHT), "../../themes.json")
 
         # process config
-        pygame.display.set_caption("TBC - Manager")
+        pygame.display.set_caption("Kingdom Manager")
 
-        logging.info(f"UIManager initialised.")
+        logging.info(f"UIDataStore initialised.")
 
 
 ui_data = _UIDataStore()

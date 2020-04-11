@@ -18,5 +18,7 @@ class _StateDataStore:
         self.internal_clock = pygame.time.Clock()
         self.time: int = 1  # total time of actions taken
 
+        logging.info(f"StateDataStore initialised.")
+
 
 state_data = _StateDataStore()
