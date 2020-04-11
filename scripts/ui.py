@@ -71,39 +71,8 @@ def update(delta_time: float):
         # all copied, clear dict
         ui_data.new_elements = {}
 
-    #
-    #
-    #
-    # focused_name = ui_data.focused_element_name
-    #
-    # # kill everything that isnt in the focused screen
-    # if ui_data.focused_element_changed:
-    #     old = ui_data.elements.pop(ui_data.focused_element)
-    #
-    #
-    #
-    #
-    #     new_dict = {}
-    #     elements = ui_data.elements
-    #
-    #     for name, element in elements.items():
-    #         if name != focused_name:
-    #             element.kill()
-    #             logging.debug(f"Killed {name} element")
-    #         else:
-    #             new_dict = {name: element}
-    #             logging.debug(f"Created new dict for {name}.")
-    #
-    #     # set elements to match focus screen
-    #     if new_dict:
-    #         ui_data.elements = new_dict
-    #         logging.debug(f"Set elements to new dict ({new_dict}).")
-    #
-    #     # reset flag
-    #     ui_data.focused_element_changed = False
-    #
 
-
+######################## ALTER - CHANGE EXISTING ELEMENTS ###############################
 
 def set_focused_element(element_name: str):
     """

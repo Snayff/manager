@@ -22,6 +22,13 @@ class Land:
         self.buildings = buildings
 
 
+class StaffMember:
+    def __init__(self, name: str, role: str, skill: int):
+        self.name = name
+        self.role = role
+        self.skill = skill
+
+
 class Population(List[Demographic], RegisteredComponent):
     pass
 
@@ -37,3 +44,8 @@ class Lands(List[Land], RegisteredComponent):
 
 class IsPlayerControlled(RegisteredComponent):
     __slots__ = ()
+
+
+class CastleStaff(List[StaffMember], RegisteredComponent):
+    pass
+

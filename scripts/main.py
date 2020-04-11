@@ -12,7 +12,7 @@ import pygame
 import snecs
 from typing import TYPE_CHECKING, Type
 from scripts import state, ui, world
-from scripts.components import Demographic, Details, IsPlayerControlled, Land, Lands, Population
+from scripts.components import CastleStaff, Demographic, Details, IsPlayerControlled, Land, Lands, Population
 from scripts.constants import VERSION, EXIT
 
 if TYPE_CHECKING:
@@ -87,8 +87,9 @@ def initialise_game():
     components = [
         IsPlayerControlled(),
         Details("My Kingdom"),
-        Population([Demographic("goblin", 100, 2)]),
-        Lands([Land("homeland", "small", "muddy", [])])
+        Population([Demographic("Goblin", 100, 2)]),
+        Lands([Land("The Homeland", "small", "muddy", []), Land("Black Moor", "average", "grass", [])]),
+        CastleStaff([])
     ]
     player_kingdom = world.create_entity(components)
 

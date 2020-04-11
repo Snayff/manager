@@ -6,7 +6,7 @@ import pygame
 from pygame_gui.elements import UIButton, UILabel, UITextBox
 
 from scripts import world
-from scripts.components import Details, IsPlayerControlled, Lands, Population
+from scripts.components import CastleStaff, Details, IsPlayerControlled, Lands, Population
 from scripts.constants import LINE_BREAK
 from scripts.ui_elements.screen import Screen
 from pygame.rect import Rect
@@ -19,23 +19,43 @@ if TYPE_CHECKING:
 class CouncilScreen(Screen):
     def __init__(self, manager: UIManager, rect: Rect):
         super().__init__(manager, rect)
-        self.options["Something"] = ("something else", None)
+        self.options["hire"] = ("* View the Rolls - Hire Staff", None)
 
-        # get info text
+        # prep to build info text
         info_text = ""
         player_kingdom = world.get_player_kingdom()
 
+        # kingdom name
         details = world.get_entitys_component(player_kingdom, Details)
         info_text += details.kingdom_name + LINE_BREAK
 
-        population = world.get_entitys_component(player_kingdom, Population)
-        for demo in population:
-            info_text += demo.race + ": " + str(demo.amount) + "( " + str(demo.birth_rate) + " per year)" + \
-                         LINE_BREAK
+        # new section: subjects
+        info_text += LINE_BREAK + LINE_BREAK
+        info_text += "-- Subjects --" + LINE_BREAK
 
+        population = world.get_entitys_component(player_kingdom, Population)
+        pop_text = ""
+        for demo in population:
+            pop_text += demo.race + ": " + str(demo.amount) + "( " + str(demo.birth_rate) + " per year), "
+        info_text += pop_text
+
+        # new section: land
+        info_text += LINE_BREAK + LINE_BREAK
+        info_text += "-- Demesne --" + LINE_BREAK
         lands = world.get_entitys_component(player_kingdom, Lands)
+        land_text = ""
         for land in lands:
-            info_text += land.name + ": " + land.size
+            land_text += land.name + ": " + land.size + ", "
+        info_text += land_text
+
+        # new section: staff
+        info_text += LINE_BREAK + LINE_BREAK
+        info_text += "-- Staff --" + LINE_BREAK
+
+        # add staff info
+        staff = world.get_entitys_component(player_kingdom, CastleStaff)
+        for member in staff:
+            info_text += member.name + ", your " + member.role + "."
 
         # create the screen
         self.create_header("Your Council")

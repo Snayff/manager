@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Type
 import pygame
@@ -46,7 +47,7 @@ class Screen(ABC):
         self.rect: Rect = rect
         self.elements: Dict[str, UIElement] = {}
         self.options: Dict[str, Tuple[str, Callable]] = {
-            "anteroom": ("Anteroom - Return", ui.swap_to_overview_screen),
+            "anteroom": ("Anteroom - Return", ui.swap_to_overview_screen)
         }
         
         # default values that need rect before they can be set
@@ -66,7 +67,24 @@ class Screen(ABC):
         # options
         if object_id in self.options:
             if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
-                self.options[object_id][1]()  # call the method
+                prefix = self.options[object_id][0][:1]
+                if prefix == "*":
+                    logging.warning(f"Clicked {object_id}, which is not implemented. Took no action.")
+                else:
+                    self.options[object_id][1]()  # call the method
+
+        if event.user_type == pygame_gui.UI_TEXT_ENTRY_FINISHED:
+            try:
+                option = list(self.options)[int(event.text) - 1]  # -1 to offset from options starting at 1
+                self.options[option][1]()  # call the method
+            except KeyError:
+                logging.warning(f"Key not found in options. Dodgy typing? ({event.text})")
+
+            # clear text
+            choice = self.elements["choice"]
+            choice.set_text("")
+            choice.redraw()
+
 
     def kill(self):
         """
@@ -130,4 +148,5 @@ class Screen(ABC):
         """
         choice = UITextEntryLine(Rect((self.choice_x, self.choice_y), (self.choice_width, self.choice_height)),
                                  self.manager, object_id="overview_choice")
+        choice.set_allowed_characters("numbers")
         self.elements["choice"] = choice
