@@ -16,7 +16,6 @@ class _StateDataStore:
         self.current_game_state = INITIALISING
         self.previous_game_state = INITIALISING
         self.internal_clock = pygame.time.Clock()
-        self.time: int = 1  # total time of actions taken
 
         logging.info(f"StateDataStore initialised.")
 

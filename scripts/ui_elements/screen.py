@@ -8,7 +8,8 @@ import pygame_gui
 from pygame_gui.elements import UIButton, UILabel, UIPanel, UITextBox, UITextEntryLine
 from pygame.rect import Rect
 
-from scripts import ui
+from scripts import ui, world
+from scripts.components import Hourglass
 from scripts.constants import LINE_BREAK
 
 if TYPE_CHECKING:
@@ -34,13 +35,15 @@ class Screen(ABC):
     button_x = section_start_x
     button_width = 152
     button_height = line_height
-    option_text_x = section_start_x + (button_width - 3)  # 3 to have button touch on both sides
+    option_text_x = section_start_x + (button_width - section_gap)  # minus to have button touch on both sides
     info_x = section_start_x
 
     # bottom area
     choice_x = section_start_x
     choice_width = 200
     choice_height = 50
+    hourglass_width = 300
+    hourglass_height = choice_height
 
     def __init__(self, manager: UIManager, rect: Rect):
         self.manager: UIManager = manager
@@ -56,6 +59,7 @@ class Screen(ABC):
         self.max_section_height = rect.height - (self.post_header_y + self.choice_height + (self.section_gap * 3))
         self.half_max_section_height = self.max_section_height / 2
         self.choice_y = rect.height - self.choice_height - (self.section_gap * 2)
+        self.hourglass_y = self.choice_y
         self.info_width = rect.width - (self.info_x + self.section_start_x)  # account for gap on right
         
     def handle_event(self, event: pygame.event.Event):
@@ -144,10 +148,32 @@ class Screen(ABC):
         Create the choice input field. Uses default settings. Called "choice".
         """
         choice = UITextEntryLine(Rect((self.choice_x, self.choice_y), (self.choice_width, self.choice_height)),
-                                 self.manager, object_id="overview_choice")
+                                 self.manager, object_id="choice")
 
         # prevent strings based on the arg
         if not allowed_str:
             choice.set_allowed_characters("numbers")
 
         self.elements["choice"] = choice
+
+    def create_hourglass_display(self):
+        """
+        Create the display of how much time is left in the day
+        """
+        # get the text
+        player_kingdom = world.get_player_kingdom()
+        hourglass = world.get_entitys_component(player_kingdom, Hourglass)
+        text = f"{str(hourglass.minutes_available)} minutes before sunset"
+
+        # create the label
+        rect = Rect((-self.hourglass_width - self.section_start_x, self.choice_y), (self.hourglass_width,
+            self.hourglass_height))
+        hourglass_display = UILabel(rect, text, self.manager, object_id="hourglass",
+            anchors={
+                "left": "right",
+                "right": "right",
+                "top": "top",
+                "bottom": "bottom"
+            })
+
+        self.elements["hourglass"] = hourglass_display

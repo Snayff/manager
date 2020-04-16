@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Type, List
 from snecs import RegisteredComponent
 
-from scripts.constants import DAYS_IN_YEAR
+from scripts.constants import DAYS_IN_YEAR, MINUTES_IN_DAY
 
 if TYPE_CHECKING:
     from typing import Union, Optional, Any, Tuple, Dict
@@ -74,3 +74,8 @@ class IsPlayerControlled(RegisteredComponent):
 
 class CastleStaff(List[StaffMember], RegisteredComponent):
     pass
+
+
+class Hourglass(RegisteredComponent):
+    def __init__(self):
+        self.minutes_available = MINUTES_IN_DAY

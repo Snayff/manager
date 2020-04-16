@@ -62,5 +62,6 @@ class CouncilScreen(Screen):
                                    self.button_width, self.button_height, self.option_text_width,
                                    self.half_max_section_height)
         self.create_choice_field()
+        self.create_hourglass_display()
 
 

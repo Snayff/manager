@@ -14,6 +14,10 @@ class _WorldDataStore:
         self.races = self._load_race_values()
         self.lands = self._load_land_values()
 
+        self.day = 1
+        self.season = 1
+        self.year = 1
+
         logging.info(f"_WorldDataStore initialised.")
 
     ######################## LOAD VALUES ########################

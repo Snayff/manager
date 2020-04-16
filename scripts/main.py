@@ -12,7 +12,7 @@ import pygame
 import snecs
 from typing import TYPE_CHECKING, Type
 from scripts import state, ui, world
-from scripts.components import CastleStaff, Demographic, Details, IsPlayerControlled, Land, Lands, Population
+from scripts.components import CastleStaff, Demographic, Details, Hourglass, IsPlayerControlled, Land, Lands, Population
 from scripts.constants import VERSION, EXIT
 
 if TYPE_CHECKING:
@@ -86,7 +86,8 @@ def game_loop():
 def initialise_game():
     components = [
         IsPlayerControlled(),
-        CastleStaff([])
+        CastleStaff([]),
+        Hourglass()
     ]
     player_kingdom = world.create_entity(components)
 

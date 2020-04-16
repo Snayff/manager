@@ -4,8 +4,8 @@ import random
 from typing import TYPE_CHECKING, Type
 
 from scripts import world
-from scripts.components import Demographic, Population
-from scripts.constants import DAYS_IN_YEAR
+from scripts.components import Demographic, Hourglass, Population
+from scripts.constants import DAYS_IN_YEAR, MINUTES_IN_DAY
 
 if TYPE_CHECKING:
     from typing import Union, Optional, Any, Tuple, Dict, List
@@ -15,6 +15,7 @@ def process_end_of_day():
     """
     Handle the transition of time.
     """
+    # births and deaths
     for kingdom, (population, ) in world.get_components([Population]):
         for demographic in population:
             accrued_births = demographic.accrued_births
@@ -40,4 +41,12 @@ def process_end_of_day():
                 # remove deaths
                 demographic.amount -= deaths
                 demographic.accrued_deaths = accrued_deaths
+
+    # allocate available time
+    player_kingdom = world.get_player_kingdom()
+    hourglass = world.get_entitys_component(player_kingdom, Hourglass)
+    hourglass.minutes_available = MINUTES_IN_DAY
+
+    # manage movement of time
+
 

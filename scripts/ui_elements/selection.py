@@ -43,16 +43,17 @@ class SelectionScreen(Screen):
                 try:
                     object_id = list(self.options)[int(event.text) - 1]  # -1 to offset from options starting at 1
                 except KeyError:
-                    logging.warning(f"Key not found in options. Dodgy typing? ({event.text})")
+                    logging.warning(f"Key not found in options when getting object id. Dodgy typing? ({event.text})")
 
         # check for a prefix indicating not implemented
         try:
-            prefix = self.options[object_id][0][:1]
-            if prefix == "*":
-                logging.warning(f"Selected {object_id}, which is not implemented. Took no action.")
-                return None
+            if object_id:
+                prefix = self.options[object_id][0][:1]
+                if prefix == "*":
+                    logging.warning(f"Selected {object_id}, which is not implemented. Took no action.")
+                    return None
         except KeyError:
-            logging.warning(f"Key not found in options. Dodgy typing? ({object_id})")
+            logging.warning(f"Key not found in options when getting prefix. Dodgy typing? ({object_id})")
 
         # possible options, in reverse order
         if self.selecting == "name":

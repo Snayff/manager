@@ -34,4 +34,5 @@ class OverviewScreen(Screen):
         self.create_option_section(self.button_x, self.option_text_x, self.post_header_y, self.button_width,
                                    self.button_height, self.option_text_width, self.max_section_height)
         self.create_choice_field()
+        self.create_hourglass_display()
 
