@@ -12,16 +12,19 @@ class _WorldDataStore:
     """
     def __init__(self):
         self.races = self._load_race_values()
+        self.lands = self._load_land_values()
 
         logging.info(f"_WorldDataStore initialised.")
 
-    def _load_race_values(self):
+    ######################## LOAD VALUES ########################
+
+    def _load_race_values(self) -> Dict[str, Dict[str, Union[int, str]]]:
         """
         Set the initial race values
         """
         races = {
             "goblin": {
-                "race": "goblin",
+                "name": "Goblin",
                 "homeworld": "G'rorrn",
                 "amount": 100,
                 "birth_rate": 2,
@@ -30,7 +33,7 @@ class _WorldDataStore:
                 "lifespan": 2
             },
             "shoom": {
-                "race": "shoom",
+                "name": "Shoom",
                 "homeworld": "Ee Arth",
                 "amount": 20,
                 "birth_rate": 0.2,
@@ -41,6 +44,24 @@ class _WorldDataStore:
         }
 
         return races
+
+    def _load_land_values(self) -> Dict[str, Dict[str, str]]:
+        """
+        Set the initial land values
+        """
+        lands = {
+            "black_moors": {
+                "name": "Black Moors",
+                "terrain": "grassland",
+                "size": "small"
+            },
+            "the_grove": {
+                "name": "The Grove",
+                "terrain": "woods",
+                "size": "medium"
+            }
+        }
+        return lands
 
 
 world_data = _WorldDataStore()

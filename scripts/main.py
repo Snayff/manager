@@ -86,6 +86,7 @@ def game_loop():
 def initialise_game():
     components = [
         IsPlayerControlled(),
+        CastleStaff([])
     ]
     player_kingdom = world.create_entity(components)
 

@@ -5,17 +5,15 @@ from typing import TYPE_CHECKING, Type
 
 import pygame
 import pygame_gui
-from pygame.rect import Rect
-from pygame_gui import UIManager
-
-from scripts import world
-from scripts.components import Demographic, Population
+from scripts import ui, world
+from scripts.components import Demographic, Details, Land, Lands, Population
 from scripts.constants import LINE_BREAK
 from scripts.ui_elements.screen import Screen
 
 if TYPE_CHECKING:
     from typing import Union, Optional, Any, Tuple, Dict, List
-
+    from pygame.rect import Rect
+    from pygame_gui import UIManager
 
 class SelectionScreen(Screen):
     """
@@ -31,6 +29,9 @@ class SelectionScreen(Screen):
         self.setup_select_race()
 
     def handle_event(self, event: pygame.event.Event):
+        """
+        Handle events
+        """
         # N.B. no call to super.
 
         object_id = event.ui_object_id.replace("options.", "")
@@ -42,10 +43,16 @@ class SelectionScreen(Screen):
                 logging.warning(f"Clicked {object_id}, which is not implemented. Took no action.")
             else:
                 if self.selecting == "race":
-                    self.add_race(object_id)
+                    self.select_race(object_id)
                     self.setup_select_land()
                 elif self.selecting == "land":
-                    self.add_land(object_id)
+                    self.select_land(object_id)
+                    self.setup_select_kingdom_name()
+
+        elif event.user_type == pygame_gui.UI_TEXT_ENTRY_FINISHED:
+            if self.selecting == "name":
+                self.select_name(event.text)
+                ui.swap_to_overview_screen()
 
     ############################ SETUP ##############################
 
@@ -64,8 +71,8 @@ class SelectionScreen(Screen):
 
         # get races
         races = world.get_all_race_data()
-        for name, race in races.items():
-            self.options[name] = (f"{str(race['amount'])} {name}s from {race['homeworld']}.", None)
+        for key, race in races.items():
+            self.options[key] = (f"{str(race['amount'])} {race['name']}s from {race['homeworld']}.", None)
 
         # create the screen
         self.create_header(self.header_text)
@@ -79,7 +86,7 @@ class SelectionScreen(Screen):
 
     def setup_select_land(self):
         """
-        Set up the screen for selection race
+        Set up the screen for selecting land
         """
         # clear existing elements
         self.kill()
@@ -91,8 +98,9 @@ class SelectionScreen(Screen):
                     " desolate place" + LINE_BREAK
 
         # create lands
-        self.options["north"] = (f"To the north is scrub.", None)
-        self.options["south"] = (f"To the south is more scrub.", None)
+        lands = world.get_all_land_data()
+        for key, land in lands.items():
+            self.options[key] = (f"The {land['size']} {land['terrain']} place known as {land['name']}.", None)
 
         # create the screen
         self.create_header(self.header_text)
@@ -104,17 +112,49 @@ class SelectionScreen(Screen):
                                    self.half_max_section_height)
         self.create_choice_field()
 
+    def setup_select_kingdom_name(self):
+        """
+        Set up the screen for selecting name
+        """
+        # clear existing elements
+        self.kill()
+
+        # set the flag
+        self.selecting = "name"
+
+        info_text = "You and yours have arrived. Is that despair you feel, or merely tiredness? Despite your doubt," \
+                    " your people look to you for direction. Perhaps we should start with a name. " + LINE_BREAK
+
+        # create the screen
+        self.create_header(self.header_text)
+        self.create_info_section(self.info_x, self.post_header_y, self.info_width, self.half_max_section_height,
+                                 info_text)
+
+        self.create_choice_field(True)
+
     ############################ CHOICES ##############################
 
-    def add_race(self, race_name: str):
+    def select_race(self, race_name: str):
         """
-        Add the race component to the player"""
+        Add the race component to the player
+        """
         player_kingdom = world.get_player_kingdom()
         race_data = world.get_race_data(race_name)
         world.add_component(player_kingdom, Population([Demographic(race_data)]))
 
-        # Details("My Kingdom"),
-        # Population([Demographic("Goblin", 100, 2, 1, 2)]),
-        # Lands([Land("The Homeland", "small", "muddy", []), Land("Black Moor", "average", "grass", [])]),
-        # CastleStaff([])
+    def select_land(self, land_name: str):
+        """
+        Add the land component to the player
+        """
+        player_kingdom = world.get_player_kingdom()
+        land_data = world.get_land_data(land_name)
+        world.add_component(player_kingdom, Lands([Land(land_data)]))
+
+
+    def select_name(self, kingdom_name: str):
+        """
+        Add the race component to the player
+        """
+        player_kingdom = world.get_player_kingdom()
+        world.add_component(player_kingdom, Details(kingdom_name))
 

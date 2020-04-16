@@ -80,11 +80,6 @@ class Screen(ABC):
             except KeyError:
                 logging.warning(f"Key not found in options. Dodgy typing? ({event.text})")
 
-            # clear text
-            choice: UITextEntryLine = self.elements["choice"]
-            choice.set_text("")
-            choice.redraw()
-
     def kill(self):
         """
         Delete all elements from self.elements and clear self.options.
@@ -94,6 +89,8 @@ class Screen(ABC):
             element.kill()
         self.elements = {}
         self.options = {}
+
+    ############################ CREATE ##############################
 
     def create_info_section(self, x: int, y: int, width: int, height: int, text: str):
         """
@@ -142,11 +139,15 @@ class Screen(ABC):
                          self.manager)
         self.elements["header"] = header
 
-    def create_choice_field(self):
+    def create_choice_field(self, allowed_str: bool = False):
         """
         Create the choice input field. Uses default settings. Called "choice".
         """
         choice = UITextEntryLine(Rect((self.choice_x, self.choice_y), (self.choice_width, self.choice_height)),
                                  self.manager, object_id="overview_choice")
-        choice.set_allowed_characters("numbers")
+
+        # prevent strings based on the arg
+        if not allowed_str:
+            choice.set_allowed_characters("numbers")
+
         self.elements["choice"] = choice

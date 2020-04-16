@@ -63,6 +63,4 @@ class CouncilScreen(Screen):
                                    self.half_max_section_height)
         self.create_choice_field()
 
-    def handle_event(self, event: pygame.event.Event):
-        super().handle_event(event)
 

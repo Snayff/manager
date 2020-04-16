@@ -80,9 +80,23 @@ def get_all_race_data() -> Dict[str, Dict[str, Union[int, str]]]:
 
 def get_race_data(race_name: str) -> Dict[str, Union[int, str]]:
     """
-    Get the base data for all races
+    Get the base data for a race
     """
     return world_data.races[race_name]
+
+
+def get_all_land_data() -> Dict[str, Dict[str, str]]:
+    """
+    Get the base data for all lands
+    """
+    return world_data.lands
+
+
+def get_land_data(land_name: str) -> Dict[str, str]:
+    """
+    Get the base data for a land
+    """
+    return world_data.lands[land_name]
 
 
 ################################ ACTIONS - CHANGE STATE - RETURN NOTHING ###############################

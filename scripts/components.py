@@ -11,8 +11,11 @@ if TYPE_CHECKING:
 
 ################## CLASSES USED IN COMPONENTS ##############################
 class Demographic:
+    """
+    Details about a section of the population.
+    """
     def __init__(self, race_data: Dict[str, Union[int, str]]):
-        self.race: str = race_data["race"]
+        self.race: str = race_data["name"]
         self.amount: int = race_data["amount"]
 
         # birth
@@ -34,11 +37,13 @@ class Demographic:
 
 
 class Land:
-    def __init__(self, name: str, size: str, terrain: str, buildings: List[str]):
-        self.name = name
-        self.terrain = terrain
-        self.size = size
-        self.buildings = buildings
+    """
+    Details about a section of the world.
+    """
+    def __init__(self, land_data: Dict[str, Union[int, str]]):
+        self.name = land_data["name"]
+        self.terrain = land_data["terrain"]
+        self.size = land_data["size"]
 
 
 class StaffMember:
