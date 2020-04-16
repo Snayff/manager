@@ -48,5 +48,5 @@ def process_end_of_day():
     hourglass.minutes_available = MINUTES_IN_DAY
 
     # manage movement of time
-
+    world.pass_days(1)
 

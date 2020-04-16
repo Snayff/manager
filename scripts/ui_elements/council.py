@@ -22,9 +22,11 @@ class CouncilScreen(Screen):
         info_text = ""
         player_kingdom = world.get_player_kingdom()
 
-        # kingdom name
+        # current date and kingdom name
         details = world.get_entitys_component(player_kingdom, Details)
-        info_text += details.kingdom_name + LINE_BREAK
+        date = world.get_current_date()
+        info_text += f"It is the {str(date[0])} day, in the {str(date[1])} season, of the {str(date[2])} year in " \
+                     f"{details.kingdom_name}..." + LINE_BREAK
 
         # new section: subjects
         info_text += LINE_BREAK + LINE_BREAK
@@ -58,7 +60,8 @@ class CouncilScreen(Screen):
         self.create_header("Your Council")
         self.create_info_section(self.info_x, self.post_header_y, self.info_width, self.half_max_section_height,
                                  info_text)
-        self.create_option_section(self.button_x, self.option_text_x, self.post_header_y + self.half_max_section_height,
+        self.create_option_section(self.button_x, self.option_text_x,
+                                   self.post_header_y + self.half_max_section_height,
                                    self.button_width, self.button_height, self.option_text_width,
                                    self.half_max_section_height)
         self.create_choice_field()

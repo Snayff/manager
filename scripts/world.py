@@ -6,7 +6,7 @@ from snecs import Component, Query, new_entity
 from snecs.typedefs import EntityID
 from scripts import debug
 from scripts.components import Details, IsPlayerControlled
-from scripts.constants import DAYS_IN_SEASON, SEASONS_IN_YEAR
+from scripts.constants import DAYS_IN_SEASON, DAYS_IN_YEAR, SEASONS_IN_YEAR
 from scripts.stores.world_data import world_data
 
 if TYPE_CHECKING:
@@ -100,6 +100,22 @@ def get_land_data(land_name: str) -> Dict[str, str]:
     return world_data.lands[land_name]
 
 
+def get_current_date() -> Tuple[int, int, int]:
+    """
+    Get the current day, season, year
+    """
+    total_days = world_data.days_passed
+
+    current_year, days_passed_in_year = divmod(total_days, DAYS_IN_YEAR)
+    current_season, current_day = divmod(days_passed_in_year, DAYS_IN_SEASON)
+
+    # add one to season and year so they dont show as 0
+    current_season += 1
+    current_year += 1
+
+    return current_day, current_season, current_year
+
+
 ################################ ACTIONS - CHANGE STATE - RETURN NOTHING ###############################
 
 def add_component(entity: EntityID, component: Component):
@@ -109,34 +125,8 @@ def add_component(entity: EntityID, component: Component):
     snecs.add_component(entity, component)
 
 
-def pass_time(days: int = 0, seasons: int = 0, years: int = 0):
+def pass_days(days: int = 1):
     """
-    Move time forwards by days, seasons and or years
+    Move time forwards by days
     """
-    seasons_to_add = 0
-    years_to_add = 0
-
-    # add days to the calendar
-    if days > 0:
-        seasons_to_add = (days + world_data.day) / DAYS_IN_SEASON
-        if seasons_to_add > 1:
-            # get the remainder and convert to days
-            new_day_value = (seasons_to_add % 1) * 100
-            world_data.day = new_day_value
-        else:
-            world_data.day += days
-
-    # add seasons to the calendar
-    seasons_to_add = int(seasons_to_add)  # remove the decimals
-    if seasons + seasons_to_add > 0:
-        years_to_add = (seasons + seasons_to_add + world_data.season) / SEASONS_IN_YEAR
-        if years_to_add > 1:
-            new_season_value = (years_to_add % 1) * 100
-            world_data.season = new_season_value
-        else:
-            world_data.season += seasons
-
-    # add years to the calendar
-    years_to_add = int(years_to_add)  # remove the decimals
-    if years + years_to_add > 0:
-        world_data.year += years + years_to_add
+    world_data.days_passed += days
