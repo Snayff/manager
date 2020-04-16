@@ -34,25 +34,40 @@ class SelectionScreen(Screen):
         """
         # N.B. no call to super.
 
-        object_id = event.ui_object_id.replace("options.", "")
-
-        # options
+        # get the id from either click or type
+        object_id = ""
         if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
+            object_id = event.ui_object_id.replace("options.", "")
+        elif event.user_type == pygame_gui.UI_TEXT_ENTRY_FINISHED:
+            if event.text.isnumeric():
+                try:
+                    object_id = list(self.options)[int(event.text) - 1]  # -1 to offset from options starting at 1
+                except KeyError:
+                    logging.warning(f"Key not found in options. Dodgy typing? ({event.text})")
+
+        # check for a prefix indicating not implemented
+        try:
             prefix = self.options[object_id][0][:1]
             if prefix == "*":
-                logging.warning(f"Clicked {object_id}, which is not implemented. Took no action.")
-            else:
-                if self.selecting == "race":
-                    self.select_race(object_id)
-                    self.setup_select_land()
-                elif self.selecting == "land":
-                    self.select_land(object_id)
-                    self.setup_select_kingdom_name()
+                logging.warning(f"Selected {object_id}, which is not implemented. Took no action.")
+                return None
+        except KeyError:
+            logging.warning(f"Key not found in options. Dodgy typing? ({object_id})")
 
-        elif event.user_type == pygame_gui.UI_TEXT_ENTRY_FINISHED:
-            if self.selecting == "name":
-                self.select_name(event.text)
-                ui.swap_to_overview_screen()
+        # possible options, in reverse order
+        if self.selecting == "name":
+            self.select_name(event.text)
+            ui.swap_to_overview_screen()
+        elif self.selecting == "race":
+            self.select_race(object_id)
+            self.setup_select_land()
+        elif self.selecting == "land":
+            self.select_land(object_id)
+            self.setup_select_kingdom_name()
+
+
+
+
 
     ############################ SETUP ##############################
 

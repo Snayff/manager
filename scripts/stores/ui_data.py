@@ -36,7 +36,7 @@ class _UIDataStore:
         self.element_keys_to_delete: List[Optional[str]] = []
 
         # now that the display is configured  init the pygame_gui
-        self.gui = UIManager((BASE_WINDOW_WIDTH, BASE_WINDOW_HEIGHT), "../../themes.json")
+        self.gui = UIManager((BASE_WINDOW_WIDTH, BASE_WINDOW_HEIGHT), "themes.json")
 
         # process config
         pygame.display.set_caption("Kingdom Manager")
