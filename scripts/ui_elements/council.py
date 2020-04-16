@@ -1,10 +1,7 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Type
-
 import pygame
-from pygame_gui.elements import UIButton, UILabel, UITextBox
-
 from scripts import world
 from scripts.components import CastleStaff, Details, IsPlayerControlled, Lands, Population
 from scripts.constants import LINE_BREAK

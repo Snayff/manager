@@ -60,7 +60,7 @@ def game_loop():
     """
     The core game loop, handling input, rendering and logic.
     """
-    ui.swap_to_overview_screen()
+    ui.swap_to_selection_screen()
 
     while not state.get_current() == EXIT:
 
@@ -86,10 +86,6 @@ def game_loop():
 def initialise_game():
     components = [
         IsPlayerControlled(),
-        Details("My Kingdom"),
-        Population([Demographic("Goblin", 100, 2, 1, 2)]),
-        Lands([Land("The Homeland", "small", "muddy", []), Land("Black Moor", "average", "grass", [])]),
-        CastleStaff([])
     ]
     player_kingdom = world.create_entity(components)
 

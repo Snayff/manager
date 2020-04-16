@@ -41,7 +41,7 @@ class _UIDataStore:
         # process config
         pygame.display.set_caption("Kingdom Manager")
 
-        logging.info(f"UIDataStore initialised.")
+        logging.info(f"_UIDataStore initialised.")
 
 
 ui_data = _UIDataStore()

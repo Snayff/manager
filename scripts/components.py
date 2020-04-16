@@ -11,27 +11,26 @@ if TYPE_CHECKING:
 
 ################## CLASSES USED IN COMPONENTS ##############################
 class Demographic:
-    def __init__(self, race: str, amount: int = 1, birth_rate: int = 1, min_brood_size: int = 1,
-            max_brood_size: int = 1, lifespan: int = 1):
-        self.race = race
-        self.amount = amount
+    def __init__(self, race_data: Dict[str, Union[int, str]]):
+        self.race: str = race_data["race"]
+        self.amount: int = race_data["amount"]
 
         # birth
-        self.birth_rate = birth_rate  # number of births per couple, per year
+        self.birth_rate: float = race_data["birth_rate"]  # number of births per couple, per year
         self.accrued_births: float = 0.0  # to hold the amounts less than 1
-        self.min_brood_size = min_brood_size  # how many babies born at once
-        self.max_brood_size = max_brood_size
+        self.min_brood: int = race_data["min_brood"]  # how many babies born at once
+        self.max_brood: int = race_data["max_brood"]
 
         # death
-        self.lifespan = lifespan
+        self.lifespan: int = race_data["lifespan"]
         self.accrued_deaths: float = 0.0  # to hold the amounts less than 1
 
     @property
-    def birth_rate_in_year(self):
+    def birth_rate_in_year(self) -> float:
         """
         How many will approximately be born in a year.
         """
-        return (self.birth_rate * self.amount) * (max(self.max_brood_size - self.min_brood_size, 1))
+        return (self.birth_rate * self.amount) * (max(self.max_brood - self.min_brood, 1))
 
 
 class Land:

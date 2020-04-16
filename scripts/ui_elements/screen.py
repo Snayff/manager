@@ -87,12 +87,13 @@ class Screen(ABC):
 
     def kill(self):
         """
-        Delete all elements from self.elements
+        Delete all elements from self.elements and clear self.options.
         """
         elements = self.elements
         for name, element in elements.items():
             element.kill()
         self.elements = {}
+        self.options = {}
 
     def create_info_section(self, x: int, y: int, width: int, height: int, text: str):
         """

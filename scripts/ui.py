@@ -95,7 +95,7 @@ def delete_element_next_frame(element_name: str):
 
 def swap_to_overview_screen():
     """
-    Show the overview screen, creating if necessary.
+    Show the overview screen
     """
     delete_element_next_frame(ui_data.focused_element_name)
 
@@ -108,7 +108,7 @@ def swap_to_overview_screen():
 
 def swap_to_council_screen():
     """
-    Show the Council screen, creating if necessary.
+    Show the Council screen
     """
     delete_element_next_frame(ui_data.focused_element_name)
 
@@ -118,6 +118,20 @@ def swap_to_council_screen():
 
     set_focused_element("council")
     logging.debug("Now showing Council Screen.")
+
+
+def swap_to_selection_screen():
+    """
+    Show the selection screen
+    """
+    delete_element_next_frame(ui_data.focused_element_name)
+
+    from scripts.ui_elements.selection import SelectionScreen
+    council = SelectionScreen(ui_data.gui, Rect((0, 0), (BASE_WINDOW_WIDTH, BASE_WINDOW_HEIGHT)))
+    ui_data.new_elements["selection"] = council
+
+    set_focused_element("selection")
+    logging.debug("Now showing Selection Screen.")
 
 
 

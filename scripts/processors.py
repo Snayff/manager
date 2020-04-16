@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import random
 from typing import TYPE_CHECKING, Type
 
 from scripts import world
@@ -28,7 +29,7 @@ def process_end_of_day():
                 accrued_births -= births
 
                 # add births
-                demographic.amount += births
+                demographic.amount += births * random.randint(demographic.min_brood, demographic.max_brood)
                 demographic.accrued_births = accrued_births
 
             # handle deaths of old age
