@@ -32,9 +32,9 @@ class Screen(ABC):
     # middle area selections
     section_start_x = 55
     button_x = section_start_x
-    button_width = 150
+    button_width = 152
     button_height = line_height
-    option_text_x = button_x + button_width
+    option_text_x = section_start_x + (button_width - 3)  # 3 to have button touch on both sides
     info_x = section_start_x
 
     # bottom area
@@ -81,10 +81,9 @@ class Screen(ABC):
                 logging.warning(f"Key not found in options. Dodgy typing? ({event.text})")
 
             # clear text
-            choice = self.elements["choice"]
+            choice: UITextEntryLine = self.elements["choice"]
             choice.set_text("")
             choice.redraw()
-
 
     def kill(self):
         """

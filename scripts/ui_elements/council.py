@@ -36,7 +36,7 @@ class CouncilScreen(Screen):
         population = world.get_entitys_component(player_kingdom, Population)
         pop_text = ""
         for demo in population:
-            pop_text += demo.race + ": " + str(demo.amount) + "( " + str(demo.birth_rate) + " per year), "
+            pop_text += demo.race + ": " + str(demo.amount) + " (" + str(demo.birth_rate_in_year) + " per year), "
         info_text += pop_text
 
         # new section: land

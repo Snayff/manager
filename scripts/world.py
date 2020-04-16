@@ -1,11 +1,9 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Type, TypeVar
-
 import snecs
+from typing import TYPE_CHECKING, Type, TypeVar
 from snecs import Component, Query, new_entity
 from snecs.typedefs import EntityID
-
 from scripts import debug
 from scripts.components import Details, IsPlayerControlled
 

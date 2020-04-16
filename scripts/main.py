@@ -87,7 +87,7 @@ def initialise_game():
     components = [
         IsPlayerControlled(),
         Details("My Kingdom"),
-        Population([Demographic("Goblin", 100, 2)]),
+        Population([Demographic("Goblin", 100, 2, 1, 2)]),
         Lands([Land("The Homeland", "small", "muddy", []), Land("Black Moor", "average", "grass", [])]),
         CastleStaff([])
     ]

@@ -1,11 +1,9 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Type
-
 import pygame
-import pygame_gui
+from typing import TYPE_CHECKING, Type
 from pygame.rect import Rect
-from scripts import ui
+from scripts import processors, ui
 from scripts.ui_elements.screen import Screen
 
 if TYPE_CHECKING:
@@ -28,7 +26,7 @@ class OverviewScreen(Screen):
             "construction": ("*Rookery - Demand construction", None),
             "diplomats": ("*Rookery - Instruct diplomats", None),
             "spy": ("*Rookery - Spy Network", None),
-            "end_day": ("*Chambers - End the day", None)
+            "end_day": ("Chambers - End the day", processors.process_end_of_day)
         }
         # TODO - combine duplicate instructions
 
