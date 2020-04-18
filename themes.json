@@ -1,0 +1,21 @@
+{
+   "#new_shape_style": {
+      "misc": {
+         "shape": "rectangle",
+         "border_width": "2",
+         "shadow_width": "1"
+      }
+   },
+
+   "button" : {
+      "prototype": "#new_shape_style"
+   },
+
+   "horizontal_slider": {
+      "prototype": "#new_shape_style",
+      "misc":
+      {
+         "enable_arrow_buttons": 0
+      }
+   }
+}
