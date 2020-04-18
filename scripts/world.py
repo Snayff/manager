@@ -20,6 +20,8 @@ _C = TypeVar("_C", bound=Component)
 get_entitys_components = snecs.all_components
 get_components = Query
 has_component = snecs.has_component
+serialise = snecs.serialize_world
+deserialise = snecs.deserialize_world
 
 
 def create_entity(components: List[Component] = None) -> EntityID:
@@ -114,6 +116,15 @@ def get_current_date() -> Tuple[int, int, int]:
     current_year += 1
 
     return current_day, current_season, current_year
+
+
+################################ SET - AMEND AN EXISTING SOMETHING ###############################
+
+def set_days_passed(days_passed: int):
+    """
+    Set the amount of days passed
+    """
+    world_data.days_passed = days_passed
 
 
 ################################ ACTIONS - CHANGE STATE - RETURN NOTHING ###############################

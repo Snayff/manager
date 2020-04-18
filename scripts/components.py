@@ -40,42 +40,77 @@ class Land:
     """
     Details about a section of the world.
     """
-    def __init__(self, land_data: Dict[str, Union[int, str]]):
-        self.name = land_data["name"]
-        self.terrain = land_data["terrain"]
-        self.size = land_data["size"]
+    def __init__(self, land_data: Dict[str, str]):
+        self.name: str = land_data["name"]
+        self.terrain: str = land_data["terrain"]
+        self.size: str = land_data["size"]
 
 
 class StaffMember:
     def __init__(self, name: str, role: str, skill: int):
-        self.name = name
-        self.role = role
-        self.skill = skill
+        self.name: str = name
+        self.role: str = role
+        self.skill: int = skill
 
 
 ################ COMPONENTS ##########################
 
 class Population(List[Demographic], RegisteredComponent):
-    pass
+    def serialize(self):
+        return (self.first, self.second)
+
+    @classmethod
+    def deserialize(cls, serialized):
+        return cls(*serialized)
 
 
 class Details(RegisteredComponent):
     def __init__(self, name: str):
         self.kingdom_name = name
 
+    def serialize(self):
+        return self.kingdom_name
+
+    @classmethod
+    def deserialize(cls, serialized):
+        return cls(*serialized)
 
 class Lands(List[Land], RegisteredComponent):
-    pass
+    def serialize(self):
+        return self.minutes_available
+
+    @classmethod
+    def deserialize(cls, serialized):
+        return cls(*serialized)
 
 
 class IsPlayerControlled(RegisteredComponent):
     __slots__ = ()
 
+    def serialize(self):
+        return True
+
+    @classmethod
+    def deserialize(cls, serialized):
+        return cls(*serialized)
+
 
 class CastleStaff(List[StaffMember], RegisteredComponent):
-    pass
+    def serialize(self):
+        return self.minutes_available
+
+    @classmethod
+    def deserialize(cls, serialized):
+        return cls(*serialized)
 
 
 class Hourglass(RegisteredComponent):
     def __init__(self):
         self.minutes_available = MINUTES_IN_DAY
+
+    def serialize(self):
+        return self.minutes_available
+
+    @classmethod
+    def deserialize(cls, serialized):
+        return cls(*serialized)

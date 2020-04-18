@@ -1,12 +1,13 @@
 from __future__ import annotations
 
+import json
 import logging
-from typing import TYPE_CHECKING, Type
+from typing import TYPE_CHECKING
 
-import pygame
-
-from scripts.constants import INITIALISING, GAME_FPS
+from scripts import world
+from scripts.constants import GAME_FPS
 from scripts.stores.state_data import state_data
+from scripts.stores.world_data import world_data
 
 if TYPE_CHECKING:
     from typing import Union, Optional, Any, Tuple, Dict, List
@@ -59,3 +60,37 @@ def set_new(new_game_state: int):
 
     log_string = f"game_state updated from {prev} to {new_game_state}"
     logging.info(log_string)
+
+
+def save_game():
+    """
+    Serialise the game data to a file
+    """
+    # get the info needed
+    save = {}
+    save["days_passed"] = world_data.days_passed
+    save["world"] = world.serialise()
+
+    # get date for filename
+    date = world.get_current_date()
+    player_kingdom = world.get_player_kingdom()
+    name = world.get_name(player_kingdom)
+    filename = f"{name}_{date[0]}_{date[1]}_{date[2]}"
+
+    # write to json
+    with open(filename, "w") as file:
+        json.dump(save, file)
+
+
+def load_game(filename: str):
+    """
+    Deserialise the game data from a file
+    """
+    # read from json
+    with open(filename, "w") as file:
+        save = json.load(file)
+
+    # deserialise data
+    world.set_days_passed(save["days_passed"])
+    world.deserialise(save["world"])
+

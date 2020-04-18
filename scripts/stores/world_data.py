@@ -6,15 +6,16 @@ from typing import TYPE_CHECKING, Type
 if TYPE_CHECKING:
     from typing import Union, Optional, Any, Tuple, Dict, List
 
+
 class _WorldDataStore:
     """
     Hold the world data
     """
     def __init__(self):
-        self.races = self._load_race_values()
-        self.lands = self._load_land_values()
+        self.races: Dict[str, Dict[str, Union[int, str]]] = self._load_race_values()
+        self.lands: Dict[str, Dict[str, str]] = self._load_land_values()
 
-        self.days_passed = 1
+        self.days_passed: int = 1
 
         logging.info(f"_WorldDataStore initialised.")
 
