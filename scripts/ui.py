@@ -7,6 +7,7 @@ import pygame
 from pygame.rect import Rect
 from scripts.constants import BASE_WINDOW_HEIGHT, BASE_WINDOW_WIDTH
 from scripts.stores.ui_data import ui_data
+from scripts.ui_elements.main_menu import MainMenuScreen
 
 if TYPE_CHECKING:
     pass
@@ -93,17 +94,17 @@ def delete_element_next_frame(element_name: str):
 
 ######################## NAVIGATION - MOVING AROUND SCREENS ###############################
 
-def swap_to_overview_screen():
+def swap_to_antechamber_screen():
     """
-    Show the overview screen
+    Show the antechamber screen
     """
     delete_element_next_frame(ui_data.focused_element_name)
 
-    from scripts.ui_elements.overview import OverviewScreen
-    overview = OverviewScreen(ui_data.gui, Rect((0, 0), (BASE_WINDOW_WIDTH, BASE_WINDOW_HEIGHT)))
-    ui_data.new_elements["overview"] = overview
+    from scripts.ui_elements.antechamber import AntechamberScreen
+    screen = AntechamberScreen(ui_data.gui, Rect((0, 0), (BASE_WINDOW_WIDTH, BASE_WINDOW_HEIGHT)))
+    ui_data.new_elements["antechamber"] = screen
 
-    set_focused_element("overview")
+    set_focused_element("antechamber")
 
 
 def swap_to_council_screen():
@@ -113,8 +114,8 @@ def swap_to_council_screen():
     delete_element_next_frame(ui_data.focused_element_name)
 
     from scripts.ui_elements.council import CouncilScreen
-    council = CouncilScreen(ui_data.gui, Rect((0, 0), (BASE_WINDOW_WIDTH, BASE_WINDOW_HEIGHT)))
-    ui_data.new_elements["council"] = council
+    screen = CouncilScreen(ui_data.gui, Rect((0, 0), (BASE_WINDOW_WIDTH, BASE_WINDOW_HEIGHT)))
+    ui_data.new_elements["council"] = screen
 
     set_focused_element("council")
     logging.debug("Now showing Council Screen.")
@@ -127,11 +128,22 @@ def swap_to_selection_screen():
     delete_element_next_frame(ui_data.focused_element_name)
 
     from scripts.ui_elements.selection import SelectionScreen
-    council = SelectionScreen(ui_data.gui, Rect((0, 0), (BASE_WINDOW_WIDTH, BASE_WINDOW_HEIGHT)))
-    ui_data.new_elements["selection"] = council
+    screen = SelectionScreen(ui_data.gui, Rect((0, 0), (BASE_WINDOW_WIDTH, BASE_WINDOW_HEIGHT)))
+    ui_data.new_elements["selection"] = screen
 
     set_focused_element("selection")
     logging.debug("Now showing Selection Screen.")
 
 
+def swap_to_main_menu_screen():
+    """
+    Show the main menu screen
+    """
+    delete_element_next_frame(ui_data.focused_element_name)
+
+    screen = MainMenuScreen(ui_data.gui, Rect((0, 0), (BASE_WINDOW_WIDTH, BASE_WINDOW_HEIGHT)))
+    ui_data.new_elements["main_menu"] = screen
+
+    set_focused_element("main_menu")
+    logging.debug("Now showing Main Menu Screen.")
 

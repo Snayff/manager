@@ -5,7 +5,7 @@ import logging
 from typing import TYPE_CHECKING
 
 from scripts import world
-from scripts.constants import GAME_FPS
+from scripts.constants import GAME_FPS, SAVE_PATH
 from scripts.stores.state_data import state_data
 from scripts.stores.world_data import world_data
 
@@ -78,16 +78,16 @@ def save_game():
     filename = f"{name}_{date[0]}_{date[1]}_{date[2]}"
 
     # write to json
-    with open(filename, "w") as file:
+    with open(SAVE_PATH + filename, "w") as file:
         json.dump(save, file)
 
 
 def load_game(filename: str):
     """
-    Deserialise the game data from a file
+    Deserialise the game data from a file. Filename does not include path to save folder.
     """
     # read from json
-    with open(filename, "w") as file:
+    with open(SAVE_PATH + filename, "w") as file:
         save = json.load(file)
 
     # deserialise data

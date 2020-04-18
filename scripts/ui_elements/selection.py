@@ -22,7 +22,7 @@ class SelectionScreen(Screen):
     def __init__(self, manager: UIManager, rect: Rect):
         super().__init__(manager, rect)
 
-        self.selecting = ""  # flag to determine what action happens on press
+        self.showing = ""  # flag to determine what action happens on press
         self.options = {}  # remove goto council
         self.header_text = "On the other side of the Rift"
 
@@ -32,43 +32,23 @@ class SelectionScreen(Screen):
         """
         Handle events
         """
-        # N.B. no call to super.
+        # get the id
+        object_id = self.get_object_id(event)
 
-        # get the id from either click or type
-        object_id = ""
-        if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
-            object_id = event.ui_object_id.replace("options.", "")
-        elif event.user_type == pygame_gui.UI_TEXT_ENTRY_FINISHED:
-            if event.text.isnumeric():
-                try:
-                    object_id = list(self.options)[int(event.text) - 1]  # -1 to offset from options starting at 1
-                except KeyError:
-                    logging.warning(f"Key not found in options when getting object id. Dodgy typing? ({event.text})")
+        # if we selected a dodgy option, do nothing
+        if not self.is_option_implemented(object_id):
+            return None
 
-        # check for a prefix indicating not implemented
-        try:
-            if object_id:
-                prefix = self.options[object_id][0][:1]
-                if prefix == "*":
-                    logging.warning(f"Selected {object_id}, which is not implemented. Took no action.")
-                    return None
-        except KeyError:
-            logging.warning(f"Key not found in options when getting prefix. Dodgy typing? ({object_id})")
-
-        # possible options, in reverse order
-        if self.selecting == "name":
+        # possible options, in reverse order to prevent selection being applicable to more than one
+        if self.showing == "name":
             self.select_name(event.text)
-            ui.swap_to_overview_screen()
-        elif self.selecting == "race":
+            ui.swap_to_antechamber_screen()
+        elif self.showing == "race":
             self.select_race(object_id)
             self.setup_select_land()
-        elif self.selecting == "land":
+        elif self.showing == "land":
             self.select_land(object_id)
             self.setup_select_kingdom_name()
-
-
-
-
 
     ############################ SETUP ##############################
 
@@ -80,10 +60,10 @@ class SelectionScreen(Screen):
         self.kill()
 
         # set the flag
-        self.selecting = "race"
+        self.showing = "race"
 
         info_text = "You open your eyes and blink into the uneven, unexpected light of the new world. Not sure who " \
-                    "else survived the journey through the Rift you look around."+ LINE_BREAK
+                    "else survived the journey through the Rift you look around." + LINE_BREAK
 
         # get races
         races = world.get_all_race_data()
@@ -102,13 +82,13 @@ class SelectionScreen(Screen):
 
     def setup_select_land(self):
         """
-        Set up the screen for selecting land
+        Set up the screen for showing land
         """
         # clear existing elements
         self.kill()
 
         # set the flag
-        self.selecting = "land"
+        self.showing = "land"
 
         info_text = "You remember. Clearly, and painfully. But there is no time to mourn, we must move on from this" \
                     " desolate place" + LINE_BREAK
@@ -130,13 +110,13 @@ class SelectionScreen(Screen):
 
     def setup_select_kingdom_name(self):
         """
-        Set up the screen for selecting name
+        Set up the screen for showing name
         """
         # clear existing elements
         self.kill()
 
         # set the flag
-        self.selecting = "name"
+        self.showing = "name"
 
         info_text = "You and yours have arrived. Is that despair you feel, or merely tiredness? Despite your doubt," \
                     " your people look to you for direction. Perhaps we should start with a name. " + LINE_BREAK
@@ -165,7 +145,6 @@ class SelectionScreen(Screen):
         player_kingdom = world.get_player_kingdom()
         land_data = world.get_land_data(land_name)
         world.add_component(player_kingdom, Lands([Land(land_data)]))
-
 
     def select_name(self, kingdom_name: str):
         """

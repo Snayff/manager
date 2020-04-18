@@ -1,0 +1,111 @@
+from __future__ import annotations
+
+import logging
+import os
+from typing import TYPE_CHECKING, Type
+
+import pygame_gui
+
+from scripts import state, ui
+from scripts.components import CastleStaff, Hourglass, IsPlayerControlled
+from scripts.constants import SAVE_PATH
+from scripts.ui_elements.screen import Screen
+
+if TYPE_CHECKING:
+    from typing import Union, Optional, Any, Tuple, Dict, List
+    from pygame.rect import Rect
+    from pygame_gui import UIManager
+    import pygame
+
+
+class MainMenuScreen(Screen):
+    def __init__(self, manager: UIManager, rect: Rect):
+        super().__init__(manager, rect)
+
+        self.setup_main_menu()
+
+    def handle_event(self, event: pygame.event.Event):
+        """
+        Handle events
+        """
+        # get the id
+        object_id = self.get_object_id(event)
+
+        # if we selected a dodgy option, do nothing
+        if not self.is_option_implemented(object_id):
+            return None
+
+        if self.showing == "main_menu":
+            self.call_options_function(object_id)
+        elif self.showing == "load":
+            self.load_game(object_id)
+
+
+
+    def setup_main_menu(self):
+        """
+        Show the default screen layout
+        """
+        # clear existing elements
+        self.kill()
+
+        # set the flag
+        self.showing = "main_menu"
+
+        # override to remove option for antechamber
+        self.options = {
+            "new_game": ("New game", self.create_new_game),
+            "load_game": ("Load game", self.setup_load_game),
+            "settings": ("* Settings", None)
+        }
+
+        # create the screen
+        self.create_option_section(self.button_x, self.option_text_x,
+                                   self.post_header_y,
+                                   self.button_width, self.button_height, self.option_text_width,
+                                   self.half_max_section_height)
+        self.create_choice_field()
+
+    def setup_load_game(self):
+        """
+        Show all save files
+        """
+        # clear existing elements
+        self.kill()
+
+        # set the flag
+        self.showing = "load"
+
+        self.options = {
+            "cancel": ("Go Back", self.setup_main_menu()),
+        }
+
+        # get all save files as options
+        for filename in os.listdir(os.getcwd() + SAVE_PATH):
+            self.options[filename] = (filename, None)
+
+        # create the screen
+        self.create_option_section(self.button_x, self.option_text_x,
+                                   self.post_header_y,
+                                   self.button_width, self.button_height, self.option_text_width,
+                                   self.half_max_section_height)
+        self.create_choice_field()
+
+    def create_new_game(self):
+        """
+        Create a new game
+        """
+        # create the player entity
+        components = [
+            IsPlayerControlled(),
+            CastleStaff([]),
+            Hourglass()
+        ]
+        from scripts import world
+        player_kingdom = world.create_entity(components)
+
+        ui.swap_to_selection_screen()
+
+    def load_game(self, filename: str):
+        state.load_game(filename)
+        ui.swap_to_antechamber_screen()

@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Type
+
 import pygame
+
 from scripts import world
 from scripts.components import CastleStaff, Details, IsPlayerControlled, Lands, Population
 from scripts.constants import LINE_BREAK
@@ -68,3 +70,12 @@ class CouncilScreen(Screen):
         self.create_hourglass_display()
 
 
+    def handle_event(self, event: pygame.event.Event):
+        # get the id
+        object_id = self.get_object_id(event)
+
+        # if we selected a dodgy option, do nothing
+        if not self.is_option_implemented(object_id):
+            return None
+
+        self.call_options_function(object_id)

@@ -14,15 +14,15 @@ if TYPE_CHECKING:
 
 
 _C = TypeVar("_C", bound=Component)
-
-
-################################ CREATE - INIT OBJECT - RETURN NEW OBJECT ###############################
 get_entitys_components = snecs.all_components
 get_components = Query
 has_component = snecs.has_component
 serialise = snecs.serialize_world
 deserialise = snecs.deserialize_world
+process_pending_deletions = snecs.process_pending_deletions
 
+
+################################ CREATE - INIT OBJECT - RETURN NEW OBJECT ###############################
 
 def create_entity(components: List[Component] = None) -> EntityID:
     """

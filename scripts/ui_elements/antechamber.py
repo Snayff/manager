@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Type
+
+import pygame
 from pygame.rect import Rect
 from scripts import processors, ui
 from scripts.ui_elements.screen import Screen
@@ -10,7 +12,7 @@ if TYPE_CHECKING:
     from pygame_gui import UIManager
 
 
-class OverviewScreen(Screen):
+class AntechamberScreen(Screen):
     """
     Initial screen for player. Show main options.
     """
@@ -35,4 +37,17 @@ class OverviewScreen(Screen):
                                    self.button_height, self.option_text_width, self.max_section_height)
         self.create_choice_field()
         self.create_hourglass_display()
+
+    def handle_event(self, event: pygame.event.Event):
+        """
+        Handle input events
+        """
+        # get the id
+        object_id = self.get_object_id(event)
+
+        # if we selected a dodgy option, do nothing
+        if not self.is_option_implemented(object_id):
+            return None
+
+        self.call_options_function(object_id)
 
