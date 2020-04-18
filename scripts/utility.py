@@ -14,7 +14,10 @@ def get_members(cls: Union[Any, Type[Any]]) -> List[str]:
     members = []
 
     for member in cls.__dict__.keys():
+        # check it is not a dunder method
         if member[:2] != "__":
-            members.append(member)
+            # check it isnt a method or function
+            if not hasattr(member, "__call__"):
+                members.append(member)
 
     return members

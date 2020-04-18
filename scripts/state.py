@@ -91,7 +91,7 @@ def load_game(filename: str):
     Deserialise the game data from a file. Filename does not include path to save folder.
     """
     # read from json
-    with open(SAVE_PATH + filename, "w") as file:
+    with open(SAVE_PATH + filename, "r") as file:
         save = json.load(file)
 
     # deserialise data

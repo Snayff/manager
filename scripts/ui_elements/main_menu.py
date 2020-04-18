@@ -41,7 +41,6 @@ class MainMenuScreen(Screen):
             self.init_load_game(object_id)
 
 
-
     def setup_main_menu(self):
         """
         Show the default screen layout
@@ -77,11 +76,11 @@ class MainMenuScreen(Screen):
         self.showing = "load"
 
         self.options = {
-            "cancel": ("Go Back", self.setup_main_menu()),
+            "cancel": ("Go Back", self.setup_main_menu),
         }
 
         # get all save files as options
-        for filename in os.listdir(os.getcwd() + SAVE_PATH):
+        for filename in os.listdir(os.getcwd() + "/" + SAVE_PATH):
             self.options[filename] = (filename, None)
 
         # create the screen
