@@ -81,6 +81,7 @@ class MainMenuScreen(Screen):
 
         # get all save files as options
         for filename in os.listdir(os.getcwd() + "/" + SAVE_PATH):
+            filename = filename.replace(".json", "")
             self.options[filename] = (filename, None)
 
         # create the screen

@@ -75,14 +75,16 @@ def save_game(is_auto_save: bool = False):
     date = world.get_current_date()
     player_kingdom = world.get_player_kingdom()
     name = world.get_name(player_kingdom)
-    filename = f"{name}_{date[0]}_{date[1]}_{date[2]}"
+    filename = f"{name}_{date[2]}_{date[1]}_{date[0]}"
 
     # if is autosave add prefix
     if is_auto_save:
         filename = "autosave_" + filename
 
+        # TODO - clear old autosaves
+
     # write to json
-    with open(SAVE_PATH + filename, "w") as file:
+    with open(SAVE_PATH + filename + ".json", "w") as file:
         json.dump(save, file, sort_keys=True, indent=4)
 
 
@@ -91,7 +93,7 @@ def load_game(filename: str):
     Deserialise the game data from a file. Filename does not include path to save folder.
     """
     # read from json
-    with open(SAVE_PATH + filename, "r") as file:
+    with open(SAVE_PATH + filename + ".json", "r") as file:
         save = json.load(file)
 
     # deserialise data

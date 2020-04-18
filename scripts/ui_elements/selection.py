@@ -138,7 +138,8 @@ class SelectionScreen(Screen):
         """
         player_kingdom = world.get_player_kingdom()
         race_data = world.get_race_data(race_name)
-        world.add_component(player_kingdom, Population([Demographic(race_data)]))
+        world.add_component(player_kingdom, Population([Demographic(**race_data)]))
+
 
     def select_land(self, land_name: str):
         """
@@ -146,7 +147,7 @@ class SelectionScreen(Screen):
         """
         player_kingdom = world.get_player_kingdom()
         land_data = world.get_land_data(land_name)
-        world.add_component(player_kingdom, Demesne([Land(land_data)]))
+        world.add_component(player_kingdom, Demesne([Land(**land_data)]))
 
     def select_name(self, kingdom_name: str):
         """

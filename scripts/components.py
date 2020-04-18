@@ -15,39 +15,42 @@ if TYPE_CHECKING:
 
 
 ################## CLASSES USED IN COMPONENTS ##############################
-class ComponentElement:
-    """
-    Base class of any class that will be contained in a Component
-    """
-    def as_dict(self):
-        """
-        Return all members as a dict. Needs the
-        """
-        class_members = utility.get_members(self)
-        _dict = {}
+# @attr.s
+# class Test:
+#     x = attr.ib()
+#
+# test = Test(x=1)
 
-        for member in class_members:
-            _dict[member] = getattr(self, member)
-
-        return _dict
-
-class Demographic(ComponentElement):
+# class ComponentElement:
+#     """
+#     Base class of any class that will be contained in a Component
+#     """
+#     def as_dict(self):
+#         """
+#         Return all members as a dict. Needs the
+#         """
+#         class_members = utility.get_members(self)
+#         _dict = {}
+#
+#         for member in class_members:
+#             _dict[member] = getattr(self, member)
+#
+#         return _dict
+@attr.s
+class Demographic:
     """
     Details about a section of the population.
     """
-    def __init__(self, race_data: Dict[str, Union[int, str]]):
-        self.race: str = race_data["name"]
-        self.amount: int = race_data["amount"]
+    name: str = attr.ib()
+    homeworld: str = attr.ib()
+    amount: int = attr.ib()
+    birth_rate: float = attr.ib()
+    min_brood: int = attr.ib()
+    max_brood: int = attr.ib()
+    lifespan: float = attr.ib()
 
-        # birth
-        self.birth_rate: float = race_data["birth_rate"]  # number of births per couple, per year
-        self.accrued_births: float = 0.0  # to hold the amounts less than 1
-        self.min_brood: int = race_data["min_brood"]  # how many babies born at once
-        self.max_brood: int = race_data["max_brood"]
-
-        # death
-        self.lifespan: int = race_data["lifespan"]
-        self.accrued_deaths: float = 0.0  # to hold the amounts less than 1
+    accrued_deaths: float = attr.ib(default=0.0)
+    accrued_births: float = attr.ib(default=0.0)
 
     @property
     def birth_rate_in_year(self) -> float:
@@ -57,21 +60,21 @@ class Demographic(ComponentElement):
         return (self.birth_rate * self.amount) * (max(self.max_brood - self.min_brood, 1))
 
 
-class Land(ComponentElement):
+@attr.s
+class Land:
     """
     Details about a section of the world.
     """
-    def __init__(self, land_data: Dict[str, str]):
-        self.name: str = land_data["name"]
-        self.terrain: str = land_data["terrain"]
-        self.size: str = land_data["size"]
+    name: str = attr.ib()
+    terrain: str = attr.ib()
+    size: str = attr.ib()
 
 
-class StaffMember(ComponentElement):
-    def __init__(self, name: str, role: str, skill: int):
-        self.name: str = name
-        self.role: str = role
-        self.skill: int = skill
+@attr.s
+class StaffMember:
+    name: str = attr.ib()
+    role: str = attr.ib()
+    skill: int = attr.ib()
 
 
 ################ COMPONENTS ##########################
@@ -80,13 +83,18 @@ class Population(List[Demographic], RegisteredComponent):
     def serialize(self):
         _dict = {}
         for demo in self:
-            _dict[demo.race] = demo.as_dict()
+            _dict[demo.name] = attr.asdict(demo)
 
         return _dict
 
     @classmethod
     def deserialize(cls, serialized):
-        return cls(*serialized)
+        demo_list = []
+
+        for key, demo in serialized.items():
+            demo_list.append(Demographic(**demo))
+
+        return Population(demo_list)
 
 
 class Details(RegisteredComponent):
@@ -98,19 +106,22 @@ class Details(RegisteredComponent):
 
     @classmethod
     def deserialize(cls, serialized):
-        return cls(*serialized)
+        return Details(serialized)
 
 class Demesne(List[Land], RegisteredComponent):
     def serialize(self):
         _dict = {}
         for land in self:
-            _dict[land.name] = land.as_dict()
+            _dict[land.name] = attr.asdict(land)
 
         return _dict
 
     @classmethod
     def deserialize(cls, serialized):
-        return cls(*serialized)
+        land_list = []
+        for key, land in serialized.items():
+            land_list.append(Land(**land))
+        return Demesne(land_list)
 
 
 class IsPlayerControlled(RegisteredComponent):
@@ -121,29 +132,33 @@ class IsPlayerControlled(RegisteredComponent):
 
     @classmethod
     def deserialize(cls, serialized):
-        return cls(*serialized)
+        return ()
 
 
 class CastleStaff(List[StaffMember], RegisteredComponent):
     def serialize(self):
         _dict = {}
         for staff_member in self:
-            _dict[staff_member.name] = staff_member.as_dict()
+            _dict[staff_member.name] = attr.asdict(staff_member)
 
         return _dict
 
     @classmethod
     def deserialize(cls, serialized):
-        return cls(*serialized)
+        staff_list = []
+        for key, staff_member in serialized.items():
+            staff_list.append(StaffMember(**staff_member))
+        return CastleStaff(staff_list)
 
 
 class Hourglass(RegisteredComponent):
-    def __init__(self):
-        self.minutes_available = MINUTES_IN_DAY
+    def __init__(self, minutes_available: int = MINUTES_IN_DAY):
+        self.minutes_available = minutes_available
 
     def serialize(self):
         return self.minutes_available
 
     @classmethod
     def deserialize(cls, serialized):
-        return cls(*serialized)
+        return Hourglass(serialized)
+
