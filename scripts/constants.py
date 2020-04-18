@@ -15,7 +15,7 @@ GAME_FPS = 60
 
 EXIT = -1
 INITIALISING = 0
-PLAYER = 1
+
 
 LINE_BREAK = "<br>"
 

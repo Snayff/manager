@@ -8,7 +8,7 @@ import pygame_gui
 
 from scripts import state, ui
 from scripts.components import CastleStaff, Hourglass, IsPlayerControlled
-from scripts.constants import SAVE_PATH
+from scripts.constants import EXIT, SAVE_PATH
 from scripts.ui_elements.screen import Screen
 
 if TYPE_CHECKING:
@@ -55,7 +55,8 @@ class MainMenuScreen(Screen):
         self.options = {
             "new_game": ("New game", self.init_new_game),
             "init_load_game": ("Load game", self.setup_load_game),
-            "settings": ("* Settings", None)
+            "settings": ("* Settings", None),
+            "exit_game": ("Exit game", self.exit_game)
         }
 
         # create the screen
@@ -113,3 +114,9 @@ class MainMenuScreen(Screen):
         state.load_game(filename)
 
         ui.swap_to_antechamber_screen()
+
+    def exit_game(self):
+        """
+        Change the game state to EXIT
+        """
+        state.set_new(EXIT)
