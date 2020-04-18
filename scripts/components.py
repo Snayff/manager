@@ -132,7 +132,7 @@ class IsPlayerControlled(RegisteredComponent):
 
     @classmethod
     def deserialize(cls, serialized):
-        return ()
+        return IsPlayerControlled()
 
 
 class CastleStaff(List[StaffMember], RegisteredComponent):

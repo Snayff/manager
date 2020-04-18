@@ -20,6 +20,7 @@ has_component = snecs.has_component
 serialise = snecs.serialize_world
 deserialise = snecs.deserialize_world
 process_pending_deletions = snecs.process_pending_deletions
+move_world = snecs.ecs.move_world
 
 
 ################################ CREATE - INIT OBJECT - RETURN NEW OBJECT ###############################

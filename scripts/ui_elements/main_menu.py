@@ -111,4 +111,5 @@ class MainMenuScreen(Screen):
         Load the game data for the selected filename, and swap to antechamber screen
         """
         state.load_game(filename)
+
         ui.swap_to_antechamber_screen()

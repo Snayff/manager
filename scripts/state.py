@@ -75,6 +75,7 @@ def save_game(is_auto_save: bool = False):
     date = world.get_current_date()
     player_kingdom = world.get_player_kingdom()
     name = world.get_name(player_kingdom)
+    name = name.replace(" ", "_")  # clean name
     filename = f"{name}_{date[2]}_{date[1]}_{date[0]}"
 
     # if is autosave add prefix
@@ -85,7 +86,7 @@ def save_game(is_auto_save: bool = False):
 
     # write to json
     with open(SAVE_PATH + filename + ".json", "w") as file:
-        json.dump(save, file, sort_keys=True, indent=4)
+        json.dump(save, file, indent=4)
 
 
 def load_game(filename: str):
@@ -98,5 +99,9 @@ def load_game(filename: str):
 
     # deserialise data
     world.set_days_passed(save["days_passed"])
-    world.deserialise(save["world"])
+    new_world = world.deserialise(save["world"])
+
+    # set the data as the default world
+    world.move_world(new_world)
+
 
