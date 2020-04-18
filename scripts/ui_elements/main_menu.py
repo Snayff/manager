@@ -38,7 +38,7 @@ class MainMenuScreen(Screen):
         if self.showing == "main_menu":
             self.call_options_function(object_id)
         elif self.showing == "load":
-            self.load_game(object_id)
+            self.init_load_game(object_id)
 
 
 
@@ -54,8 +54,8 @@ class MainMenuScreen(Screen):
 
         # override to remove option for antechamber
         self.options = {
-            "new_game": ("New game", self.create_new_game),
-            "load_game": ("Load game", self.setup_load_game),
+            "new_game": ("New game", self.init_new_game),
+            "init_load_game": ("Load game", self.setup_load_game),
             "settings": ("* Settings", None)
         }
 
@@ -64,7 +64,7 @@ class MainMenuScreen(Screen):
                                    self.post_header_y,
                                    self.button_width, self.button_height, self.option_text_width,
                                    self.half_max_section_height)
-        self.create_choice_field()
+        self.create_choice_field(allowed_str=False)
 
     def setup_load_game(self):
         """
@@ -89,11 +89,11 @@ class MainMenuScreen(Screen):
                                    self.post_header_y,
                                    self.button_width, self.button_height, self.option_text_width,
                                    self.half_max_section_height)
-        self.create_choice_field()
+        self.create_choice_field(allowed_str=False)
 
-    def create_new_game(self):
+    def init_new_game(self):
         """
-        Create a new game
+        Create new game data and swap to selection screen
         """
         # create the player entity
         components = [
@@ -106,6 +106,9 @@ class MainMenuScreen(Screen):
 
         ui.swap_to_selection_screen()
 
-    def load_game(self, filename: str):
+    def init_load_game(self, filename: str):
+        """
+        Load the game data for the selected filename, and swap to antechamber screen
+        """
         state.load_game(filename)
         ui.swap_to_antechamber_screen()

@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Type
 import pygame
 
 from scripts import world
-from scripts.components import CastleStaff, Details, IsPlayerControlled, Lands, Population
+from scripts.components import CastleStaff, Details, IsPlayerControlled, Demesne, Population
 from scripts.constants import LINE_BREAK
 from scripts.ui_elements.screen import Screen
 from pygame.rect import Rect
@@ -43,7 +43,7 @@ class CouncilScreen(Screen):
         # new section: land
         info_text += LINE_BREAK + LINE_BREAK
         info_text += "-- Demesne --" + LINE_BREAK
-        lands = world.get_entitys_component(player_kingdom, Lands)
+        lands = world.get_entitys_component(player_kingdom, Demesne)
         land_text = ""
         for land in lands:
             land_text += land.name + ": " + land.size + ", "
@@ -66,7 +66,7 @@ class CouncilScreen(Screen):
                                    self.post_header_y + self.half_max_section_height,
                                    self.button_width, self.button_height, self.option_text_width,
                                    self.half_max_section_height)
-        self.create_choice_field()
+        self.create_choice_field(allowed_str=False)
         self.create_hourglass_display()
 
 

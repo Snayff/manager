@@ -72,3 +72,6 @@ radon
 # log files
 profiling/
 game.log
+
+# save files
+saves/

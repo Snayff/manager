@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Type
 import pygame
 import pygame_gui
 from scripts import ui, world
-from scripts.components import Demographic, Details, Land, Lands, Population
+from scripts.components import Demographic, Details, Land, Demesne, Population
 from scripts.constants import LINE_BREAK
 from scripts.ui_elements.screen import Screen
 
@@ -35,15 +35,17 @@ class SelectionScreen(Screen):
         # get the id
         object_id = self.get_object_id(event)
 
+        # doesnt need object id
+        if self.showing == "name":
+            self.select_name(event.text)
+            ui.swap_to_antechamber_screen()
+
         # if we selected a dodgy option, do nothing
         if not self.is_option_implemented(object_id):
             return None
 
         # possible options, in reverse order to prevent selection being applicable to more than one
-        if self.showing == "name":
-            self.select_name(event.text)
-            ui.swap_to_antechamber_screen()
-        elif self.showing == "race":
+        if self.showing == "race":
             self.select_race(object_id)
             self.setup_select_land()
         elif self.showing == "land":
@@ -78,7 +80,7 @@ class SelectionScreen(Screen):
                                    self.post_header_y + self.half_max_section_height,
                                    self.button_width, self.button_height, self.option_text_width,
                                    self.half_max_section_height)
-        self.create_choice_field()
+        self.create_choice_field(allowed_str=False)
 
     def setup_select_land(self):
         """
@@ -106,7 +108,7 @@ class SelectionScreen(Screen):
                                    self.post_header_y + self.half_max_section_height,
                                    self.button_width, self.button_height, self.option_text_width,
                                    self.half_max_section_height)
-        self.create_choice_field()
+        self.create_choice_field(allowed_str=False)
 
     def setup_select_kingdom_name(self):
         """
@@ -126,7 +128,7 @@ class SelectionScreen(Screen):
         self.create_info_section(self.info_x, self.post_header_y, self.info_width, self.half_max_section_height,
                                  info_text)
 
-        self.create_choice_field(True)
+        self.create_choice_field(allowed_num=False)
 
     ############################ CHOICES ##############################
 
@@ -144,7 +146,7 @@ class SelectionScreen(Screen):
         """
         player_kingdom = world.get_player_kingdom()
         land_data = world.get_land_data(land_name)
-        world.add_component(player_kingdom, Lands([Land(land_data)]))
+        world.add_component(player_kingdom, Demesne([Land(land_data)]))
 
     def select_name(self, kingdom_name: str):
         """

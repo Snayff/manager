@@ -3,7 +3,7 @@ from __future__ import annotations
 import random
 from typing import TYPE_CHECKING, Type
 
-from scripts import world
+from scripts import state, world
 from scripts.components import Demographic, Hourglass, Population
 from scripts.constants import DAYS_IN_YEAR, MINUTES_IN_DAY
 
@@ -50,3 +50,5 @@ def process_end_of_day():
     # manage movement of time
     world.pass_days(1)
 
+    # save the game
+    state.save_game(is_auto_save=True)

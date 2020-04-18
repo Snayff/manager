@@ -1,8 +1,11 @@
 from __future__ import annotations
 
+import logging
+from abc import ABC
 from typing import TYPE_CHECKING, Type, List
 from snecs import RegisteredComponent
 
+from scripts import utility
 from scripts.constants import DAYS_IN_YEAR, MINUTES_IN_DAY
 
 if TYPE_CHECKING:
@@ -10,7 +13,23 @@ if TYPE_CHECKING:
 
 
 ################## CLASSES USED IN COMPONENTS ##############################
-class Demographic:
+class ComponentElement:
+    """
+    Base class of any class that will be contained in a Component
+    """
+    def as_dict(self):
+        """
+        Return all members as a dict. Needs the
+        """
+        class_members = utility.get_members(self)
+        _dict = {}
+
+        for member in class_members:
+            _dict[member] = getattr(self, member)
+
+        return _dict
+
+class Demographic(ComponentElement):
     """
     Details about a section of the population.
     """
@@ -36,7 +55,7 @@ class Demographic:
         return (self.birth_rate * self.amount) * (max(self.max_brood - self.min_brood, 1))
 
 
-class Land:
+class Land(ComponentElement):
     """
     Details about a section of the world.
     """
@@ -46,7 +65,7 @@ class Land:
         self.size: str = land_data["size"]
 
 
-class StaffMember:
+class StaffMember(ComponentElement):
     def __init__(self, name: str, role: str, skill: int):
         self.name: str = name
         self.role: str = role
@@ -57,7 +76,11 @@ class StaffMember:
 
 class Population(List[Demographic], RegisteredComponent):
     def serialize(self):
-        return (self.first, self.second)
+        _dict = {}
+        for demo in self:
+            _dict[demo.race] = demo.as_dict()
+
+        return _dict
 
     @classmethod
     def deserialize(cls, serialized):
@@ -75,9 +98,13 @@ class Details(RegisteredComponent):
     def deserialize(cls, serialized):
         return cls(*serialized)
 
-class Lands(List[Land], RegisteredComponent):
+class Demesne(List[Land], RegisteredComponent):
     def serialize(self):
-        return self.minutes_available
+        _dict = {}
+        for land in self:
+            _dict[land.name] = land.as_dict()
+
+        return _dict
 
     @classmethod
     def deserialize(cls, serialized):
@@ -97,7 +124,11 @@ class IsPlayerControlled(RegisteredComponent):
 
 class CastleStaff(List[StaffMember], RegisteredComponent):
     def serialize(self):
-        return self.minutes_available
+        _dict = {}
+        for staff_member in self:
+            _dict[staff_member.name] = staff_member.as_dict()
+
+        return _dict
 
     @classmethod
     def deserialize(cls, serialized):

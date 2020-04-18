@@ -134,7 +134,7 @@ class Screen(ABC):
                          self.manager)
         self.elements["header"] = header
 
-    def create_choice_field(self, allowed_str: bool = False):
+    def create_choice_field(self, allowed_str: bool = True, allowed_num: bool = True):
         """
         Create the choice input field. Uses default settings. Called "choice".
         """
@@ -142,7 +142,11 @@ class Screen(ABC):
                                  self.manager, object_id="choice")
 
         # prevent strings based on the arg
-        if not allowed_str:
+        if allowed_str and allowed_num:
+            pass
+        elif allowed_str and not allowed_num:
+            choice.set_forbidden_characters("numbers")
+        elif not allowed_str and allowed_num:
             choice.set_allowed_characters("numbers")
 
         self.elements["choice"] = choice
@@ -185,7 +189,8 @@ class Screen(ABC):
                     object_id = list(self.options)[int(event.text) - 1]  # -1 to offset from options starting at 1
                 except KeyError:
                     logging.warning(f"Key not found in options when getting object id. Dodgy typing? ({event.text})")
-
+                except IndexError:
+                    logging.warning(f"Index outside options when getting object id. Dodgy typing? ({event.text})")
         return object_id
 
 

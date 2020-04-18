@@ -62,7 +62,7 @@ def set_new(new_game_state: int):
     logging.info(log_string)
 
 
-def save_game():
+def save_game(is_auto_save: bool = False):
     """
     Serialise the game data to a file
     """
@@ -77,9 +77,13 @@ def save_game():
     name = world.get_name(player_kingdom)
     filename = f"{name}_{date[0]}_{date[1]}_{date[2]}"
 
+    # if is autosave add prefix
+    if is_auto_save:
+        filename = "autosave_" + filename
+
     # write to json
     with open(SAVE_PATH + filename, "w") as file:
-        json.dump(save, file)
+        json.dump(save, file, sort_keys=True, indent=4)
 
 
 def load_game(filename: str):
