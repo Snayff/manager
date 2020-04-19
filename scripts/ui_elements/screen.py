@@ -3,12 +3,10 @@ from __future__ import annotations
 import logging
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Type
-import pygame
-import pygame_gui
 from pygame_gui.elements import UIButton, UILabel, UIPanel, UITextBox, UITextEntryLine
+from pygame_gui import UI_BUTTON_PRESSED, UI_TEXT_ENTRY_FINISHED
 from pygame.rect import Rect
-
-from scripts import ui, world
+from scripts import world
 from scripts.components import Hourglass
 from scripts.constants import LINE_BREAK
 
@@ -16,6 +14,7 @@ if TYPE_CHECKING:
     from typing import Union, Optional, Any, Tuple, Dict, List, Callable
     from pygame_gui import UIManager
     from pygame_gui.core import UIElement
+    from pygame.event import Event
 
 
 class Screen(ABC):
@@ -53,9 +52,7 @@ class Screen(ABC):
         self.manager: UIManager = manager
         self.rect: Rect = rect
         self.elements: Dict[str, UIElement] = {}
-        self.options: Dict[str, Tuple[str, Callable]] = {
-            "anteroom": ("Anteroom - Return", ui.swap_to_antechamber_screen)
-        }
+        self.options: Dict[str, Tuple[str, Callable]] = {}
         self.showing = ""  # flag is set in setup
 
         # default values that need rect before they can be set
@@ -175,15 +172,15 @@ class Screen(ABC):
 
     ############################ CHECKS ##############################
 
-    def get_object_id(self, event: pygame.event.Event) -> str:
+    def get_object_id(self, event: Event) -> str:
         """
         Strip unnecessary details from the event's ui_object_id and handle keyboard or mouse input to get object id
         """
         # get the id from either click or type
         object_id = ""
-        if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
+        if event.user_type == UI_BUTTON_PRESSED:
             object_id = event.ui_object_id.replace("options.", "")
-        elif event.user_type == pygame_gui.UI_TEXT_ENTRY_FINISHED:
+        elif event.user_type == UI_TEXT_ENTRY_FINISHED:
             if event.text.isnumeric():
                 try:
                     object_id = list(self.options)[int(event.text) - 1]  # -1 to offset from options starting at 1

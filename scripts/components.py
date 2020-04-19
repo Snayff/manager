@@ -1,64 +1,18 @@
 from __future__ import annotations
 
-import logging
-from abc import ABC
-from typing import TYPE_CHECKING, Type, List
+from typing import TYPE_CHECKING, List
 
 import attr
 from snecs import RegisteredComponent
 
-from scripts import utility
-from scripts.constants import DAYS_IN_YEAR, MINUTES_IN_DAY
+from scripts.constants import MINUTES_IN_DAY
+from scripts.demographics import Demographic
 
 if TYPE_CHECKING:
-    from typing import Union, Optional, Any, Tuple, Dict
+    pass
 
 
 ################## CLASSES USED IN COMPONENTS ##############################
-# @attr.s
-# class Test:
-#     x = attr.ib()
-#
-# test = Test(x=1)
-
-# class ComponentElement:
-#     """
-#     Base class of any class that will be contained in a Component
-#     """
-#     def as_dict(self):
-#         """
-#         Return all members as a dict. Needs the
-#         """
-#         class_members = utility.get_members(self)
-#         _dict = {}
-#
-#         for member in class_members:
-#             _dict[member] = getattr(self, member)
-#
-#         return _dict
-@attr.s
-class Demographic:
-    """
-    Details about a section of the population.
-    """
-    name: str = attr.ib()
-    homeworld: str = attr.ib()
-    amount: int = attr.ib()
-    birth_rate: float = attr.ib()
-    min_brood: int = attr.ib()
-    max_brood: int = attr.ib()
-    lifespan: float = attr.ib()
-
-    accrued_deaths: float = attr.ib(default=0.0)
-    accrued_births: float = attr.ib(default=0.0)
-
-    @property
-    def birth_rate_in_year(self) -> float:
-        """
-        How many will approximately be born in a year.
-        """
-        return (self.birth_rate * self.amount) * (max(self.max_brood - self.min_brood, 1))
-
 
 @attr.s
 class Land:
@@ -107,6 +61,7 @@ class Details(RegisteredComponent):
     @classmethod
     def deserialize(cls, serialized):
         return Details(serialized)
+
 
 class Demesne(List[Land], RegisteredComponent):
     def serialize(self):
@@ -162,3 +117,66 @@ class Hourglass(RegisteredComponent):
     def deserialize(cls, serialized):
         return Hourglass(serialized)
 
+
+class Edicts(RegisteredComponent):
+    """
+    List of known and active edicts
+    """
+    def __init__(self, known_edicts: List[str] = None, active_edicts: List[str] = None):
+        if known_edicts is None:
+            known_edicts = []
+        if active_edicts is None:
+            active_edicts = []
+        self.known_edicts: List[str] = known_edicts
+        self.active_edicts: List[str] = active_edicts
+
+    def serialize(self):
+        known_dict = {}
+        active_dict = {}
+        for edict_name in self.known_edicts:
+            known_dict[edict_name] = edict_name
+
+        for edict_name in self.active_edicts:
+            active_dict[edict_name] = edict_name
+
+        _dict = {
+            "known_edicts": known_dict,
+            "active_edicts": active_dict
+        }
+
+        return _dict
+
+    @classmethod
+    def deserialize(cls, serialized):
+        known_edicts = []
+        active_edicts = []
+
+        for key, inner_dict in serialized.items():
+            if key == "known_edicts":
+                for edict_name in inner_dict.values():
+                    known_edicts.append(edict_name)
+            elif key == "active_edicts":
+                for edict_name in inner_dict.values():
+                    active_edicts.append(edict_name)
+
+        return Edicts(known_edicts, active_edicts)
+
+
+class Resources(RegisteredComponent):
+    """
+    A Kingdom's resources.
+    """
+    def __init__(self, vittles: int = 0, wealth: int = 0, raw_materials: int = 0, refined_materials: int = 0,
+            commodities: int = 0):
+        self.vittles = vittles  # used to eat and drink
+        self.wealth = wealth  # used to buy stuff
+        self.raw_materials = raw_materials  # used to build basic stuff
+        self.refined_materials = refined_materials  # used to build better stuff
+        self.commodities = commodities  # used to trade
+
+    def serialize(self):
+        return self.vittles, self.wealth, self.raw_materials, self.refined_materials, self.commodities
+
+    @classmethod
+    def deserialize(cls, serialized):
+        return Resources(**serialized)

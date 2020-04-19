@@ -1,13 +1,9 @@
 from __future__ import annotations
 
-import logging
 import os
 from typing import TYPE_CHECKING, Type
-
-import pygame_gui
-
 from scripts import state, ui
-from scripts.components import CastleStaff, Hourglass, IsPlayerControlled
+from scripts.components import CastleStaff, Edicts, Hourglass, IsPlayerControlled
 from scripts.constants import EXIT, SAVE_PATH
 from scripts.ui_elements.screen import Screen
 
@@ -100,7 +96,8 @@ class MainMenuScreen(Screen):
         components = [
             IsPlayerControlled(),
             CastleStaff([]),
-            Hourglass()
+            Hourglass(),
+            Edicts(["conscription"])
         ]
         from scripts import world
         player_kingdom = world.create_entity(components)

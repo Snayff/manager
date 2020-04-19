@@ -1,24 +1,25 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Type
-
-import pygame
-
-from scripts import world
-from scripts.components import CastleStaff, Details, IsPlayerControlled, Demesne, Population
+from scripts import ui, world
+from scripts.components import CastleStaff, Details, Edicts, IsPlayerControlled, Demesne, Population
 from scripts.constants import LINE_BREAK
 from scripts.ui_elements.screen import Screen
-from pygame.rect import Rect
 
 if TYPE_CHECKING:
     from typing import Union, Optional, Any, Tuple, Dict, List
     from pygame_gui import UIManager
+    from pygame.rect import Rect
+    from pygame.event import Event
 
 
 class CouncilScreen(Screen):
     def __init__(self, manager: UIManager, rect: Rect):
         super().__init__(manager, rect)
-        self.options["hire"] = ("* View the Rolls - Hire Staff", None)
+        self.options = {
+            "anteroom": ("Anteroom - Return", ui.swap_to_antechamber_screen),
+            "hire": ("* View the Rolls - Hire Staff", None)
+        }
 
         # prep to build info text
         info_text = ""
@@ -58,6 +59,16 @@ class CouncilScreen(Screen):
         for member in staff:
             info_text += member.name + ", your " + member.role + "."
 
+        # new section: active edicts
+        info_text += LINE_BREAK + LINE_BREAK
+        info_text += "-- Active Edicts --" + LINE_BREAK
+
+        # add edict info
+        edicts = world.get_entitys_component(player_kingdom, Edicts)
+        for name in edicts.active_edicts:
+            info_text += name
+
+
         # create the screen
         self.create_header("Your Council")
         self.create_info_section(self.info_x, self.post_header_y, self.info_width, self.half_max_section_height,
@@ -70,7 +81,7 @@ class CouncilScreen(Screen):
         self.create_hourglass_display()
 
 
-    def handle_event(self, event: pygame.event.Event):
+    def handle_event(self, event: Event):
         # get the id
         object_id = self.get_object_id(event)
 

@@ -1,15 +1,14 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Type
-
-import pygame
-from pygame.rect import Rect
 from scripts import processors, ui
 from scripts.ui_elements.screen import Screen
 
 if TYPE_CHECKING:
     from typing import Union, Optional, Any, Tuple, Dict, List
     from pygame_gui import UIManager
+    from pygame.rect import Rect
+    from pygame.event import Event
 
 
 class AntechamberScreen(Screen):
@@ -22,7 +21,7 @@ class AntechamberScreen(Screen):
             "council": ("Council Room - Meet with your council", ui.swap_to_council_screen),
             "host": ("*Throne Room - Host petitioners", None),
             "search": ("*Cartographer's Display - Search for new lands", None),
-            "edict": ("*Study - Proclaim an edict", None),
+            "edict": ("Study - Proclaim an edict", ui.swap_to_study_screen),
             "military": ("*Cartographer's Display - Military action", None),
             "construction": ("*Rookery - Demand construction", None),
             "diplomats": ("*Rookery - Instruct diplomats", None),
@@ -38,7 +37,7 @@ class AntechamberScreen(Screen):
         self.create_choice_field(allowed_str=False)
         self.create_hourglass_display()
 
-    def handle_event(self, event: pygame.event.Event):
+    def handle_event(self, event: Event):
         """
         Handle input events
         """

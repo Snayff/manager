@@ -6,7 +6,8 @@ from typing import TYPE_CHECKING, Type
 import pygame
 
 from scripts import state, ui, world
-from scripts.components import Demographic, Hourglass, Population
+from scripts.components import Hourglass, Population
+from scripts.demographics import Demographic
 from scripts.constants import DAYS_IN_YEAR, MINUTES_IN_DAY
 
 if TYPE_CHECKING:

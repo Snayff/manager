@@ -6,7 +6,8 @@ from typing import TYPE_CHECKING, Type
 import pygame
 import pygame_gui
 from scripts import ui, world
-from scripts.components import Demographic, Details, Land, Demesne, Population
+from scripts.components import Details, Land, Demesne, Population
+from scripts.demographics import Demographic
 from scripts.constants import LINE_BREAK
 from scripts.ui_elements.screen import Screen
 
@@ -70,7 +71,8 @@ class SelectionScreen(Screen):
         # get races
         races = world.get_all_race_data()
         for key, race in races.items():
-            self.options[key] = (f"{str(race['amount'])} {race['name']}s from {race['homeworld']}.", None)
+            race = race()
+            self.options[key] = (f"{str(race.amount)} {race.name}s from {race.homeworld}.", None)
 
         # create the screen
         self.create_header(self.header_text)
@@ -137,8 +139,10 @@ class SelectionScreen(Screen):
         Add the race component to the player
         """
         player_kingdom = world.get_player_kingdom()
-        race_data = world.get_race_data(race_name)
-        world.add_component(player_kingdom, Population([Demographic(**race_data)]))
+        demographic = world.get_demographic(race_name)
+        # create an instance of the race and add to the population component
+        world.add_component(player_kingdom, Population([demographic()]))
+
 
 
     def select_land(self, land_name: str):

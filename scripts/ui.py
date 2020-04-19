@@ -8,6 +8,7 @@ from pygame.rect import Rect
 from scripts.constants import BASE_WINDOW_HEIGHT, BASE_WINDOW_WIDTH
 from scripts.stores.ui_data import ui_data
 from scripts.ui_elements.main_menu import MainMenuScreen
+from scripts.ui_elements.study import StudyScreen
 
 if TYPE_CHECKING:
     pass
@@ -147,3 +148,15 @@ def swap_to_main_menu_screen():
     set_focused_element("main_menu")
     logging.debug("Now showing Main Menu Screen.")
 
+
+def swap_to_study_screen():
+    """
+    Show the study screen
+    """
+    delete_element_next_frame(ui_data.focused_element_name)
+
+
+    screen = StudyScreen(ui_data.gui, Rect((0, 0), (BASE_WINDOW_WIDTH, BASE_WINDOW_HEIGHT)))
+    ui_data.new_elements["study"] = screen
+
+    set_focused_element("study")

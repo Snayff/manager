@@ -7,6 +7,7 @@ from snecs.typedefs import EntityID
 from scripts import debug
 from scripts.components import Details, IsPlayerControlled
 from scripts.constants import DAYS_IN_SEASON, DAYS_IN_YEAR, SEASONS_IN_YEAR
+from scripts.demographics import Demographic
 from scripts.stores.world_data import world_data
 
 if TYPE_CHECKING:
@@ -75,14 +76,14 @@ def get_name(entity: EntityID) -> str:
     return name
 
 
-def get_all_race_data() -> Dict[str, Dict[str, Union[int, str]]]:
+def get_all_race_data() -> Dict[str, Type[Demographic]]:
     """
     Get the base data for all races
     """
     return world_data.races
 
 
-def get_race_data(race_name: str) -> Dict[str, Union[int, str]]:
+def get_demographic(race_name: str) -> Type[Demographic]:
     """
     Get the base data for a race
     """
