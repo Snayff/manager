@@ -64,7 +64,7 @@ class Conscription(Edict):
         return f"Birthrate decreased by {str(self.birth_reduction_rate)}."
 
     def revoke(self) -> str:
-        pass
+        return f"Birthrate no longer decreased by {str(self.birth_reduction_rate)}."
 
     def apply(self):
         # TODO - this needs to be integrated

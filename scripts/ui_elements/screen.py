@@ -6,6 +6,8 @@ from typing import TYPE_CHECKING, Type
 from pygame_gui.elements import UIButton, UILabel, UIPanel, UITextBox, UITextEntryLine
 from pygame_gui import UI_BUTTON_PRESSED, UI_TEXT_ENTRY_FINISHED
 from pygame.rect import Rect
+from pygame_gui.windows import UIMessageWindow
+
 from scripts import world
 from scripts.components import Hourglass
 from scripts.constants import LINE_BREAK
@@ -65,6 +67,10 @@ class Screen(ABC):
         self.choice_y = rect.height - self.choice_height - (self.section_gap * 2)
         self.hourglass_y = self.choice_y
         self.info_width = rect.width - (self.info_x + self.section_start_x)  # account for gap on right
+        self.message_width = 200
+        self.message_height = 150
+        self.message_x = (self.rect.width / 2) - (self.message_width / 2)
+        self.message_y = (self.rect.height / 2) - (self.message_height / 2)
 
     @abstractmethod
     def handle_event(self, event: Event):
@@ -172,6 +178,14 @@ class Screen(ABC):
 
         self.elements["hourglass"] = hourglass_display
 
+    def create_message(self, msg: str, title: str):
+        """
+        Create a pop up message.
+        """
+        rect = Rect((self.message_width, self.message_height), (self.message_x, self.message_y))
+        message_window = UIMessageWindow(rect, msg, self.manager, window_title=title)
+        self.elements["message_window"] = message_window
+
     ############################ CHECKS ##############################
 
     def get_object_id(self, event: Event) -> str:
@@ -191,7 +205,6 @@ class Screen(ABC):
                 except IndexError:
                     logging.warning(f"Index outside options when getting object id. Dodgy typing? ({event.text})")
         return object_id
-
 
     def is_option_implemented(self, object_id: Union[str, int]) -> bool:
         """

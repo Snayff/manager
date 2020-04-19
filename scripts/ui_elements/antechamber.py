@@ -17,6 +17,31 @@ class AntechamberScreen(Screen):
     """
     def __init__(self, manager: UIManager, rect: Rect):
         super().__init__(manager, rect)
+
+        self.setup_default_screen()
+
+    def handle_event(self, event: Event):
+        """
+        Handle input events
+        """
+        # get the id
+        object_id = self.get_object_id(event)
+
+        #  ensure we didnt select a dodgy option
+        if self.is_option_implemented(object_id):
+            self.call_options_function(object_id)
+
+
+    def setup_default_screen(self):
+        """
+        Set up the default screen
+        """
+        # clear existing elements
+        self.kill()
+
+        # set the flag
+        self.showing = "antechamber"
+
         self.options = {
             "council": ("Council Room - Meet with your council", ui.swap_to_council_screen),
             "host": ("*Throne Room - Host petitioners", None),
@@ -31,22 +56,8 @@ class AntechamberScreen(Screen):
         # TODO - combine duplicate instructions
 
         # create the screen
-        self.create_header("Anteroom")
+        self.create_header("Antechamber")
         self.create_option_section(self.button_x, self.option_text_x, self.post_header_y, self.button_width,
                                    self.button_height, self.option_text_width, self.max_section_height)
         self.create_choice_field(allowed_str=False)
         self.create_hourglass_display()
-
-    def handle_event(self, event: Event):
-        """
-        Handle input events
-        """
-        # get the id
-        object_id = self.get_object_id(event)
-
-        # if we selected a dodgy option, do nothing
-        if not self.is_option_implemented(object_id):
-            return None
-
-        self.call_options_function(object_id)
-

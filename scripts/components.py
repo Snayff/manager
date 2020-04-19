@@ -158,6 +158,7 @@ class Edicts(RegisteredComponent):
                     known_edicts.append(edict_name)
             elif key == "active_edicts":
                 for _key, edict in serialized.items():
+                    # FIXME - this isnt working. Issue with Abstract
                     active_edicts.append(Edict(**edict))
 
         return Edicts(known_edicts, active_edicts)

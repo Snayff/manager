@@ -22,7 +22,7 @@ class SelectionScreen(Screen):
 
         self.header_text = "On the other side of the Rift"
 
-        self.setup_select_race()
+        self.setup_default_screen()
 
     def handle_event(self, event: Event):
         """
@@ -36,21 +36,19 @@ class SelectionScreen(Screen):
             self.select_name(event.text)
             ui.swap_to_antechamber_screen()
 
-        # if we selected a dodgy option, do nothing
-        if not self.is_option_implemented(object_id):
-            return None
-
-        # possible options, in reverse order to prevent selection being applicable to more than one
-        if self.showing == "race":
-            self.select_race(object_id)
-            self.setup_select_land()
-        elif self.showing == "land":
-            self.select_land(object_id)
-            self.setup_select_kingdom_name()
+        # ensure we didnt select a dodgy option
+        if self.is_option_implemented(object_id):
+            # possible options, in reverse order to prevent selection being applicable to more than one
+            if self.showing == "race":
+                self.select_race(object_id)
+                self.setup_select_land()
+            elif self.showing == "land":
+                self.select_land(object_id)
+                self.setup_select_kingdom_name()
 
     ############################ SETUP ##############################
 
-    def setup_select_race(self):
+    def setup_default_screen(self):
         """
         Set up the screen for selection race
         """

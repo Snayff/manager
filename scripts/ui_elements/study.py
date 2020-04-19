@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Type
-from scripts import world
+from scripts import ui, world
 from scripts.components import Edicts
 from scripts.ui_elements.screen import Screen
 
@@ -28,18 +28,21 @@ class StudyScreen(Screen):
         # get the id
         object_id = self.get_object_id(event)
 
-        # if we selected a dodgy option, do nothing
-        if not self.is_option_implemented(object_id):
-            return None
+        # check if the message window has been dismissed
+        if "message_window" in object_id:
+            # refresh the screen
+            self.setup_default_screen()
 
-        if self.showing == "study":
-            # if the second element of the tuple (possible) is True
-            if self.options[object_id][1]:
-                # add the edict
-                self.toggle_edict(object_id)
+        #  ensure we didnt select a dodgy option
+        if self.is_option_implemented(object_id):
+            if self.showing == "study":
+                if object_id == "antechamber":
+                    self.call_options_function(object_id)
 
-                # refresh the screen
-                self.setup_default_screen()
+                # if the second element of the tuple (possible) is True
+                elif self.options[object_id][1]:
+                    # add the edict
+                    self.toggle_edict(object_id)
 
     def setup_default_screen(self):
         """
@@ -52,7 +55,9 @@ class StudyScreen(Screen):
         self.showing = "study"
 
         # clear options
-        self.options = {}
+        self.options = {
+            "antechamber": ("Anteroom - Return", ui.swap_to_antechamber_screen),
+        }
 
         # get possible edicts and set as options
         player_kingdom = world.get_player_kingdom()
@@ -92,7 +97,6 @@ class StudyScreen(Screen):
                                    self.half_max_section_height)
         self.create_choice_field(allowed_str=False)
 
-
     def toggle_edict(self, edict_name):
         """
         Enact or revoke an edict.
@@ -100,12 +104,15 @@ class StudyScreen(Screen):
         player_kingdom = world.get_player_kingdom()
         edicts = world.get_entitys_component(player_kingdom, Edicts)
         edict = world.get_edict(edict_name)
-        edict = edict(owning_entity=player_kingdom)
+        edict = edict(owning_entity=player_kingdom)  # This is throwing an unexpected arg error but is right.
 
-        if edict_name in edicts.active_edicts:
+        if edict in edicts.active_edicts:
             msg = edict.revoke()
+            outcome = "rescinded"
             edicts.active_edicts.remove(edict)
         else:
             msg = edict.enact()
             edicts.active_edicts.append(edict)
+            outcome = "proclaimed"
 
+        self.create_message(msg, "Edict " + outcome)
