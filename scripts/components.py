@@ -7,6 +7,7 @@ from snecs import RegisteredComponent
 
 from scripts.constants import MINUTES_IN_DAY
 from scripts.demographics import Demographic
+from scripts.edicts import Edict
 
 if TYPE_CHECKING:
     pass
@@ -122,13 +123,13 @@ class Edicts(RegisteredComponent):
     """
     List of known and active edicts
     """
-    def __init__(self, known_edicts: List[str] = None, active_edicts: List[str] = None):
+    def __init__(self, known_edicts: List[str] = None, active_edicts: List[Edict] = None):
         if known_edicts is None:
             known_edicts = []
         if active_edicts is None:
             active_edicts = []
         self.known_edicts: List[str] = known_edicts
-        self.active_edicts: List[str] = active_edicts
+        self.active_edicts: List[Edict] = active_edicts
 
     def serialize(self):
         known_dict = {}
@@ -136,8 +137,8 @@ class Edicts(RegisteredComponent):
         for edict_name in self.known_edicts:
             known_dict[edict_name] = edict_name
 
-        for edict_name in self.active_edicts:
-            active_dict[edict_name] = edict_name
+        for edict in self.active_edicts:
+            active_dict[edict.name] = attr.asdict(edict)
 
         _dict = {
             "known_edicts": known_dict,
@@ -156,8 +157,8 @@ class Edicts(RegisteredComponent):
                 for edict_name in inner_dict.values():
                     known_edicts.append(edict_name)
             elif key == "active_edicts":
-                for edict_name in inner_dict.values():
-                    active_edicts.append(edict_name)
+                for _key, edict in serialized.items():
+                    active_edicts.append(Edict(**edict))
 
         return Edicts(known_edicts, active_edicts)
 

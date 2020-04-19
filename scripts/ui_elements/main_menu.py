@@ -47,7 +47,7 @@ class MainMenuScreen(Screen):
         # set the flag
         self.showing = "main_menu"
 
-        # override to remove option for antechamber
+        # set options
         self.options = {
             "new_game": ("New game", self.init_new_game),
             "init_load_game": ("Load game", self.setup_load_game),

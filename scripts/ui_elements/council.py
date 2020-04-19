@@ -16,6 +16,9 @@ if TYPE_CHECKING:
 class CouncilScreen(Screen):
     def __init__(self, manager: UIManager, rect: Rect):
         super().__init__(manager, rect)
+
+        self.header_text = "Your Council Chambers"
+
         self.options = {
             "anteroom": ("Anteroom - Return", ui.swap_to_antechamber_screen),
             "hire": ("* View the Rolls - Hire Staff", None)
@@ -70,7 +73,7 @@ class CouncilScreen(Screen):
 
 
         # create the screen
-        self.create_header("Your Council")
+        self.create_header(self.header_text)
         self.create_info_section(self.info_x, self.post_header_y, self.info_width, self.half_max_section_height,
                                  info_text)
         self.create_option_section(self.button_x, self.option_text_x,

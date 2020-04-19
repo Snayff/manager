@@ -8,6 +8,7 @@ from scripts import debug
 from scripts.components import Details, IsPlayerControlled
 from scripts.constants import DAYS_IN_SEASON, DAYS_IN_YEAR, SEASONS_IN_YEAR
 from scripts.demographics import Demographic
+from scripts.edicts import Edict
 from scripts.stores.world_data import world_data
 
 if TYPE_CHECKING:
@@ -88,6 +89,13 @@ def get_demographic(race_name: str) -> Type[Demographic]:
     Get the base data for a race
     """
     return world_data.races[race_name]
+
+
+def get_edict(edict_name: str) -> Type[Edict]:
+    """
+    Get the base data for an edict
+    """
+    return world_data.edicts[edict_name]
 
 
 def get_all_land_data() -> Dict[str, Dict[str, str]]:

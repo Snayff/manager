@@ -1,13 +1,8 @@
 from __future__ import annotations
 
-import logging
 from typing import TYPE_CHECKING, Type
-
-import pygame
-import pygame_gui
 from scripts import ui, world
 from scripts.components import Details, Land, Demesne, Population
-from scripts.demographics import Demographic
 from scripts.constants import LINE_BREAK
 from scripts.ui_elements.screen import Screen
 
@@ -15,6 +10,8 @@ if TYPE_CHECKING:
     from typing import Union, Optional, Any, Tuple, Dict, List
     from pygame.rect import Rect
     from pygame_gui import UIManager
+    from pygame.event import Event
+
 
 class SelectionScreen(Screen):
     """
@@ -23,13 +20,11 @@ class SelectionScreen(Screen):
     def __init__(self, manager: UIManager, rect: Rect):
         super().__init__(manager, rect)
 
-        self.showing = ""  # flag to determine what action happens on press
-        self.options = {}  # remove goto council
         self.header_text = "On the other side of the Rift"
 
         self.setup_select_race()
 
-    def handle_event(self, event: pygame.event.Event):
+    def handle_event(self, event: Event):
         """
         Handle events
         """
@@ -140,10 +135,9 @@ class SelectionScreen(Screen):
         """
         player_kingdom = world.get_player_kingdom()
         demographic = world.get_demographic(race_name)
+
         # create an instance of the race and add to the population component
         world.add_component(player_kingdom, Population([demographic()]))
-
-
 
     def select_land(self, land_name: str):
         """

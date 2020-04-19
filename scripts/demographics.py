@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from abc import ABC
 from typing import TYPE_CHECKING, Type
 
 import attr
@@ -9,7 +10,7 @@ if TYPE_CHECKING:
 
 
 @attr.s(auto_attribs=True)
-class Demographic:
+class Demographic(ABC):
     """
     Details about a section of the population.
     """
@@ -41,6 +42,7 @@ class Goblin(Demographic):
     min_brood: int = 1
     max_brood: int = 4
     lifespan: float = 10
+
 
 @attr.s(auto_attribs=True)
 class Shoom(Demographic):
