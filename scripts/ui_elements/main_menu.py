@@ -33,6 +33,8 @@ class MainMenuScreen(Screen):
 
         if self.showing == "main_menu":
             self.call_options_function(object_id)
+        elif self.showing == "load" and object_id == "cancel":
+            self.call_options_function(object_id)
         elif self.showing == "load":
             self.init_load_game(object_id)
 

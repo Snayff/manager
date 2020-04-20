@@ -64,7 +64,7 @@ class SelectionScreen(Screen):
         # get races
         races = world.get_all_demographics()
         for key, race in races.items():
-            self.options[key] = (f"{str(race.amount)} {race.name}s from {race.homeworld}.", None)
+            self.options[key] = (f"{str(race.initial_amount)} {race.name}s from {race.homeworld}.", None)
 
         # create the screen
         self.create_header(self.header_text)

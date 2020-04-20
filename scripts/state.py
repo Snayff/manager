@@ -78,7 +78,7 @@ def save_game(is_auto_save: bool = False):
     player_kingdom = world.get_player_kingdom()
     name = world.get_name(player_kingdom)
     name = name.replace(" ", "_")  # clean name
-    filename = f"{name}_{date[0]}_{date[1]}_{date[2]}"
+    filename = f"{name}_{date[2]}_{date[1]}_{date[0]}"
 
     # manage autosaves
     if is_auto_save:
@@ -90,11 +90,10 @@ def save_game(is_auto_save: bool = False):
         for _filename in os.listdir(full_save_path):
             if f"autosave_{name}" in _filename:
                 existing_autosaves.append(_filename)
+        existing_autosaves = sorted(existing_autosaves)
         while len(existing_autosaves) > MAX_AUTOSAVES - 1:  # -1 to handle the offset
             _filename = existing_autosaves.pop(0)
             os.remove(full_save_path + "/" + _filename)
-
-
 
 
     # write to json

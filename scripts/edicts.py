@@ -73,6 +73,6 @@ class Conscription(Edict):
         return f"Birthrate no longer decreased by {str(self.birth_reduction_rate)}."
 
     def apply(self, environment: Dict[str, Union[int, float]]):
-        environment["birth_rate"] = int(environment["birth_rate"] * (1 - self.birth_reduction_rate))
+        environment["birth_rate"] = environment["birth_rate"] * (1 - self.birth_reduction_rate)
 
 

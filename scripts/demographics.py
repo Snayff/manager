@@ -18,13 +18,14 @@ class Demographic(ABC):
     key = "not specified"
     name = "not specified"
     homeworld = "not specified"
-    amount = 0
+    initial_amount = 0
     birth_rate = 0  # how many births per year
     min_brood = 0
     max_brood = 0
     lifespan = 0
 
     # instance vars
+    amount: int = 0
     accrued_deaths: float = 0.0
     accrued_births: float = 0.0
 
@@ -42,11 +43,13 @@ class Goblin(Demographic):
     key = "goblin"
     name = "Goblin"
     homeworld = "G'rorrn"
-    amount = 100
+    initial_amount = 100
     birth_rate = 2
     min_brood = 1
     max_brood = 4
     lifespan = 10
+
+    amount: int = initial_amount
 
 
 @attr.s(auto_attribs=True)
@@ -54,8 +57,10 @@ class Shoom(Demographic):
     key = "shoom"
     name = "Shoom"
     homeworld = "Ee Arth"
-    amount = 20
+    initial_amount = 20
     birth_rate = 0.2
     min_brood = 1
     max_brood = 1
     lifespan = 100
+
+    amount: int = initial_amount

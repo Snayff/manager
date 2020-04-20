@@ -43,7 +43,9 @@ def process_end_of_day():
 
                 # add births
                 demographic.amount += births * random.randint(demographic.min_brood, demographic.max_brood)
-                demographic.accrued_births = accrued_births
+
+            # update accrued births
+            demographic.accrued_births = accrued_births
 
             # handle deaths of old age
             if accrued_deaths >= 1:
@@ -52,7 +54,9 @@ def process_end_of_day():
 
                 # remove deaths
                 demographic.amount -= deaths
-                demographic.accrued_deaths = accrued_deaths
+
+            # update accrued deaths
+            demographic.accrued_deaths = accrued_deaths
 
     # allocate available time
     player_kingdom = world.get_player_kingdom()
