@@ -62,9 +62,8 @@ class SelectionScreen(Screen):
                     "else survived the journey through the Rift you look around." + LINE_BREAK
 
         # get races
-        races = world.get_all_race_data()
+        races = world.get_all_demographics()
         for key, race in races.items():
-            race = race()
             self.options[key] = (f"{str(race.amount)} {race.name}s from {race.homeworld}.", None)
 
         # create the screen

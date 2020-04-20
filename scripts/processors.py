@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Type
 import pygame
 
 from scripts import state, ui, world
-from scripts.components import Hourglass, Population
+from scripts.components import Edicts, Hourglass, Population
 from scripts.demographics import Demographic
 from scripts.constants import DAYS_IN_YEAR, MINUTES_IN_DAY
 
@@ -19,6 +19,7 @@ def process_input(event: pygame.event.Event):
         if event.key == pygame.K_ESCAPE:
             ui.swap_to_main_menu_screen()
 
+
 def process_end_of_day():
     """
     Handle the transition of time.
@@ -29,7 +30,10 @@ def process_end_of_day():
             accrued_births = demographic.accrued_births
             accrued_deaths = demographic.accrued_deaths
 
-            accrued_births += demographic.birth_rate_in_year / DAYS_IN_YEAR
+            # get birth rate
+            birth_rate = world.get_modified_stat(kingdom, "birth_rate", demographic.birth_rate_in_year)
+
+            accrued_births += birth_rate / DAYS_IN_YEAR
             accrued_deaths += demographic.amount / (demographic.lifespan * DAYS_IN_YEAR)
 
             # handle births

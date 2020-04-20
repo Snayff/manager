@@ -1,10 +1,8 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, List
-
 import attr
+from typing import TYPE_CHECKING, List
 from snecs import RegisteredComponent
-
 from scripts.constants import MINUTES_IN_DAY
 from scripts.demographics import Demographic
 from scripts.edicts import Edict
@@ -15,21 +13,23 @@ if TYPE_CHECKING:
 
 ################## CLASSES USED IN COMPONENTS ##############################
 
-@attr.s
+@attr.s(auto_attribs=True)
 class Land:
     """
     Details about a section of the world.
     """
-    name: str = attr.ib()
-    terrain: str = attr.ib()
-    size: str = attr.ib()
+    key: str
+    name: str
+    terrain: str
+    size: str
 
 
-@attr.s
+@attr.s(auto_attribs=True)
 class StaffMember:
-    name: str = attr.ib()
-    role: str = attr.ib()
-    skill: int = attr.ib()
+    key: str
+    name: str
+    role: str
+    skill: int
 
 
 ################ COMPONENTS ##########################
@@ -38,7 +38,7 @@ class Population(List[Demographic], RegisteredComponent):
     def serialize(self):
         _dict = {}
         for demo in self:
-            _dict[demo.name] = attr.asdict(demo)
+            _dict[demo.key] = attr.asdict(demo)
 
         return _dict
 
@@ -46,8 +46,11 @@ class Population(List[Demographic], RegisteredComponent):
     def deserialize(cls, serialized):
         demo_list = []
 
-        for key, demo in serialized.items():
-            demo_list.append(Demographic(**demo))
+        for key, demo_values in serialized.items():
+            from scripts import world
+            demo = world.get_demographic(key)
+
+            demo_list.append(demo(**demo_values))
 
         return Population(demo_list)
 
@@ -68,7 +71,7 @@ class Demesne(List[Land], RegisteredComponent):
     def serialize(self):
         _dict = {}
         for land in self:
-            _dict[land.name] = attr.asdict(land)
+            _dict[land.key] = attr.asdict(land)
 
         return _dict
 
@@ -157,9 +160,10 @@ class Edicts(RegisteredComponent):
                 for edict_name in inner_dict.values():
                     known_edicts.append(edict_name)
             elif key == "active_edicts":
-                for _key, edict in serialized.items():
-                    # FIXME - this isnt working. Issue with Abstract
-                    active_edicts.append(Edict(**edict))
+                for _key, edict_values in inner_dict.items():
+                    from scripts import world
+                    edict = world.get_edict(_key)
+                    active_edicts.append(edict(**edict_values))
 
         return Edicts(known_edicts, active_edicts)
 

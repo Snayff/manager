@@ -76,10 +76,15 @@ class MainMenuScreen(Screen):
             "cancel": ("Go Back", self.setup_main_menu),
         }
 
+        saves = {}
         # get all save files as options
         for filename in os.listdir(os.getcwd() + "/" + SAVE_PATH):
-            filename = filename.replace(".json", "")
-            self.options[filename] = (filename, None)
+            filename = filename.replace(".json", "")  # cant have the . in the object id
+            saves[filename] = (filename, None)
+
+        # sort saves
+        for key, value in sorted(saves.items()):
+            self.options[key] = value
 
         # create the screen
         self.create_option_section(self.button_x, self.option_text_x,

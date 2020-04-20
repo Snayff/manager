@@ -44,11 +44,13 @@ class _WorldDataStore:
         """
         lands = {
             "black_moors": {
+                "key": "black_moors",
                 "name": "Black Moors",
                 "terrain": "grassland",
                 "size": "small"
             },
             "the_grove": {
+                "key": "the_grove",
                 "name": "The Grove",
                 "terrain": "woods",
                 "size": "medium"

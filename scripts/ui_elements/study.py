@@ -64,14 +64,13 @@ class StudyScreen(Screen):
         edicts = world.get_entitys_component(player_kingdom, Edicts)
         for edict_name in edicts.known_edicts:
             edict = world.get_edict(edict_name)
-            edict = edict(owning_entity=player_kingdom)  # This is throwing an unexpected arg error but is right.
 
             # is it active?
             if edict in edicts.active_edicts:
                 possible = True
                 prefix = "Revoke "
                 description = edict.revoke_description
-            elif edict.is_requirement_met():
+            elif edict.is_requirement_met(player_kingdom):
                 # not active but possible
                 possible = True
                 prefix = "Enact "

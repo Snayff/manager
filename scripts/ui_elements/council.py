@@ -99,7 +99,8 @@ class CouncilScreen(Screen):
         population = world.get_entitys_component(player_kingdom, Population)
         info_text = "-- Subjects --" + LINE_BREAK
         for demo in population:
-            info_text += demo.name + ": " + str(demo.amount) + " (" + str(demo.birth_rate_in_year) + " per year), "
+            birth_rate = world.get_modified_stat(player_kingdom, "birth_rate", demo.birth_rate_in_year)
+            info_text += demo.name + ": " + str(demo.amount) + " (" + str(birth_rate) + " per year), "
         return info_text
 
     def get_demesne_section_text(self, player_kingdom: EntityID) -> str:

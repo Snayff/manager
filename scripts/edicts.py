@@ -3,7 +3,8 @@ from __future__ import annotations
 import attr
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Type
-from scripts import world
+from snecs.typedefs import EntityID
+
 
 if TYPE_CHECKING:
     from typing import Union, Optional, Any, Tuple, Dict, List
@@ -11,14 +12,17 @@ if TYPE_CHECKING:
 
 @attr.s(auto_attribs=True)
 class Edict(ABC):
+    # N.B. do not specify type as doing so makes it a instance variable and we need class variable
     owning_entity: int
-    name: str = "not specified"
-    enact_description: str = "not specified"
-    revoke_description: str = "not specified"
-    affects: List[str] = []
+    key = "not specified"
+    name = "not specified"
+    enact_description = "not specified"
+    revoke_description = "not specified"
+    affects = []
 
+    @classmethod
     @abstractmethod
-    def is_requirement_met(self) -> bool:
+    def is_requirement_met(cls, entity: EntityID) -> bool:
         """
         Confirm if requirement for the edict is met.
         """
@@ -41,7 +45,7 @@ class Edict(ABC):
 
     
     @abstractmethod
-    def apply(self) -> str:
+    def apply(self, environment: Dict[str, Union[int, float]]):
         """
         Apply the edict's modifiers
         """
@@ -50,13 +54,15 @@ class Edict(ABC):
 
 @attr.s(auto_attribs=True)
 class Conscription(Edict):
-    name: str = "conscription"
-    enact_description: str = "Put their bodies to work in our service."
-    revoke_description: str = "Return them to the fields and their homes."
-    affects: List[str] = ["birth_rate"]
-    birth_reduction_rate: float = 0.12
+    key = "conscription"
+    name = "Conscription"
+    enact_description = "Put their bodies to work in our service."
+    revoke_description = "Return them to the fields and homes."
+    affects = ["birth_rate"]
+    birth_reduction_rate = 0.12
 
-    def is_requirement_met(self) -> bool:
+    @classmethod
+    def is_requirement_met(cls, entity: EntityID) -> bool:
         # no requirements, always true
         return True
 
@@ -66,13 +72,7 @@ class Conscription(Edict):
     def revoke(self) -> str:
         return f"Birthrate no longer decreased by {str(self.birth_reduction_rate)}."
 
-    def apply(self):
-        # TODO - this needs to be integrated
-        birth_reduction_rate = 0.12
+    def apply(self, environment: Dict[str, Union[int, float]]):
+        environment["birth_rate"] = int(environment["birth_rate"] * (1 - self.birth_reduction_rate))
 
-        from scripts.components import Population
-        pop = world.get_entitys_component(self.owning_entity, Population)
-
-        for demo in pop:
-            demo.birth_rate = demo.birth_rate - (demo.birth_rate * birth_reduction_rate)
 

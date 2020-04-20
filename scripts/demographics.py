@@ -14,42 +14,48 @@ class Demographic(ABC):
     """
     Details about a section of the population.
     """
-    name: str = "not specified"
-    homeworld: str = "not specified"
-    amount: int = 0
-    birth_rate: float = 0
-    min_brood: int = 0
-    max_brood: int = 0
-    lifespan: float = 0
+    # N.B. do not specify type as doing so makes it a instance variable and we need class variable
+    key = "not specified"
+    name = "not specified"
+    homeworld = "not specified"
+    amount = 0
+    birth_rate = 0  # how many births per year
+    min_brood = 0
+    max_brood = 0
+    lifespan = 0
 
+    # instance vars
     accrued_deaths: float = 0.0
     accrued_births: float = 0.0
 
     @property
-    def birth_rate_in_year(self) -> float:
+    def birth_rate_in_year(self) -> int:
         """
         How many, approximately, will be born in a year. Variance caused by min and max brood size.
         """
-        return (self.birth_rate * self.amount) * (max(self.max_brood - self.min_brood, 1))
+        birth_rate_in_year = (self.birth_rate * self.amount) * (max((self.max_brood + self.min_brood) / 2, 1))
+        return int(birth_rate_in_year)
 
 
 @attr.s(auto_attribs=True)
 class Goblin(Demographic):
-    name: str = "Goblin"
-    homeworld: str = "G'rorrn"
-    amount: int = 100
-    birth_rate: float = 2
-    min_brood: int = 1
-    max_brood: int = 4
-    lifespan: float = 10
+    key = "goblin"
+    name = "Goblin"
+    homeworld = "G'rorrn"
+    amount = 100
+    birth_rate = 2
+    min_brood = 1
+    max_brood = 4
+    lifespan = 10
 
 
 @attr.s(auto_attribs=True)
 class Shoom(Demographic):
-    name: str = "Shoom"
-    homeworld: str = "Ee Arth"
-    amount: int = 20
-    birth_rate: float = 0.2
-    min_brood: int = 1
-    max_brood: int = 1
-    lifespan: float = 100
+    key = "shoom"
+    name = "Shoom"
+    homeworld = "Ee Arth"
+    amount = 20
+    birth_rate = 0.2
+    min_brood = 1
+    max_brood = 1
+    lifespan = 100
