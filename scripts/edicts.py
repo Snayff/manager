@@ -4,7 +4,6 @@ import attr
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Type
 from snecs.typedefs import EntityID
-
 from scripts.constants import BIRTH_RATE
 
 if TYPE_CHECKING:

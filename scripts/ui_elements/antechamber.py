@@ -43,15 +43,15 @@ class AntechamberScreen(Screen):
         self.showing = "antechamber"
 
         self.options = {
-            "council": ("Council Room - Meet with your council", ui.swap_to_council_screen),
-            "host": ("*Throne Room - Host petitioners", None),
-            "search": ("*Cartographer's Display - Search for new lands", None),
-            "edict": ("Study - Proclaim an edict", ui.swap_to_study_screen),
-            "military": ("*Cartographer's Display - Military action", None),
-            "construction": ("*Rookery - Demand construction", None),
-            "diplomats": ("*Rookery - Instruct diplomats", None),
-            "spy": ("*Rookery - Spy Network", None),
-            "end_day": ("Chambers - End the day", processors.process_end_of_day)
+            "council": ui.Option("Council Room - Meet with your council", ui.swap_to_council_screen),
+            "host": ui.Option("*Throne Room - Host petitioners", None),
+            "search": ui.Option("*Cartographer's Display - Search for new lands", None),
+            "edict": ui.Option("Study - Proclaim an edict", ui.swap_to_study_screen),
+            "military": ui.Option("*Cartographer's Display - Military action", None),
+            "construction": ui.Option("*Rookery - Demand construction", None),
+            "diplomats": ui.Option("*Rookery - Instruct diplomats", None),
+            "spy": ui.Option("*Rookery - Spy Network", None),
+            "end_day": ui.Option("Chambers - End the day", processors.process_end_of_day)
         }
         # TODO - combine duplicate instructions
 

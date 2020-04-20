@@ -7,8 +7,7 @@ from pygame_gui.elements import UIButton, UILabel, UIPanel, UITextBox, UITextEnt
 from pygame_gui import UI_BUTTON_PRESSED, UI_TEXT_ENTRY_FINISHED
 from pygame.rect import Rect
 from pygame_gui.windows import UIMessageWindow
-
-from scripts import world
+from scripts import world, ui
 from scripts.components import Hourglass
 from scripts.constants import LINE_BREAK
 
@@ -56,7 +55,7 @@ class Screen(ABC):
         self.manager: UIManager = manager
         self.rect: Rect = rect
         self.elements: Dict[str, UIElement] = {}
-        self.options: Dict[str, Tuple[str, Callable]] = {}
+        self.options: Dict[str, ui.Option] = {}
         self.showing = ""  # flag is set in setup
 
         # default values that need rect before they can be set
@@ -118,7 +117,7 @@ class Screen(ABC):
         self.elements["panel"] = panel
 
         # loop options and extract text and id
-        for _id, (text, _method) in self.options.items():
+        for _id, (text, *rest) in self.options.items():
             options_text += text + LINE_BREAK + LINE_BREAK
             option_button = UIButton(Rect((button_x, y + offset_y), (button_width, button_height)),
                                      str(count), self.manager, object_id=_id, parent_element=panel)
@@ -228,4 +227,4 @@ class Screen(ABC):
         """
         Call the option's function
         """
-        self.options[object_id][1]()
+        self.options[object_id].func()

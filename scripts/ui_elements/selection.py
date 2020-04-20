@@ -64,7 +64,7 @@ class SelectionScreen(Screen):
         # get races
         races = world.get_all_demographics()
         for key, race in races.items():
-            self.options[key] = (f"{str(race.initial_amount)} {race.name}s from {race.homeworld}.", None)
+            self.options[key] = ui.Option(f"{str(race.initial_amount)} {race.name}s from {race.homeworld}.", None)
 
         # create the screen
         self.create_header(self.header_text)
@@ -92,7 +92,7 @@ class SelectionScreen(Screen):
         # create lands
         lands = world.get_all_land_data()
         for key, land in lands.items():
-            self.options[key] = (f"The {land['size']} {land['terrain']} place known as {land['name']}.", None)
+            self.options[key] = ui.Option(f"The {land['size']} {land['terrain']} place known as {land['name']}.", None)
 
         # create the screen
         self.create_header(self.header_text)
@@ -110,6 +110,8 @@ class SelectionScreen(Screen):
         """
         # clear existing elements
         self.kill()
+
+        self.options = {}
 
         # set the flag
         self.showing = "name"

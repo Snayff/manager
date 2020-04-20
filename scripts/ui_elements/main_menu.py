@@ -38,7 +38,6 @@ class MainMenuScreen(Screen):
         elif self.showing == "load":
             self.init_load_game(object_id)
 
-
     def setup_main_menu(self):
         """
         Show the default screen layout
@@ -51,10 +50,10 @@ class MainMenuScreen(Screen):
 
         # set options
         self.options = {
-            "new_game": ("New game", self.init_new_game),
-            "init_load_game": ("Load game", self.setup_load_game),
-            "settings": ("* Settings", None),
-            "exit_game": ("Exit game", self.exit_game)
+            "new_game": ui.Option("New game", self.init_new_game),
+            "init_load_game": ui.Option("Load game", self.setup_load_game),
+            "settings": ui.Option("* Settings", None),
+            "exit_game": ui.Option("Exit game", self.exit_game)
         }
 
         # create the screen
@@ -75,14 +74,14 @@ class MainMenuScreen(Screen):
         self.showing = "load"
 
         self.options = {
-            "cancel": ("Go Back", self.setup_main_menu),
+            "cancel": ui.Option("Go Back", self.setup_main_menu),
         }
 
         saves = {}
         # get all save files as options
         for filename in os.listdir(os.getcwd() + "/" + SAVE_PATH):
             filename = filename.replace(".json", "")  # cant have the . in the object id
-            saves[filename] = (filename, None)
+            saves[filename] = ui.Option(filename, None)
 
         # sort saves
         for key, value in sorted(saves.items()):

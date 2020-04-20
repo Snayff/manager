@@ -42,8 +42,8 @@ class CouncilScreen(Screen):
 
     def setup_default_screen(self):
         self.options = {
-            "antechamber": ("Anteroom - Return", ui.swap_to_antechamber_screen),
-            "hire": ("* View the Rolls - Hire Staff", None)
+            "antechamber": ui.Option("Anteroom - Return", ui.swap_to_antechamber_screen),
+            "hire": ui.Option("* View the Rolls - Hire Staff", None)
         }
 
         # prep to build info text

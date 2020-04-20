@@ -56,7 +56,7 @@ class StudyScreen(Screen):
 
         # clear options
         self.options = {
-            "antechamber": ("Anteroom - Return", ui.swap_to_antechamber_screen),
+            "antechamber": ui.Option("Anteroom - Return", ui.swap_to_antechamber_screen),
         }
 
         # get possible edicts and set as options
@@ -80,7 +80,7 @@ class StudyScreen(Screen):
                 prefix = "[Requirement not met]"
                 description = edict.enact_description
 
-            self.options[edict_name] = (prefix + edict_name + " - " + description, possible)
+            self.options[edict_name] = ui.Option(prefix + edict_name + " - " + description, possible, )
 
         # create the info text
         info_text = "You rifle through your scattered parchments, hearing the crack of old vellum with each wave of "\
