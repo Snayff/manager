@@ -1,13 +1,9 @@
 from __future__ import annotations
 
-import logging
 import os
 from typing import TYPE_CHECKING, Type
-
-import pygame_gui
-
 from scripts import state, ui
-from scripts.components import CastleStaff, Hourglass, IsPlayerControlled
+from scripts.components import CastleStaff, Edicts, Hourglass, IsPlayerControlled
 from scripts.constants import EXIT, SAVE_PATH
 from scripts.ui_elements.screen import Screen
 
@@ -37,6 +33,8 @@ class MainMenuScreen(Screen):
 
         if self.showing == "main_menu":
             self.call_options_function(object_id)
+        elif self.showing == "load" and object_id == "cancel":
+            self.call_options_function(object_id)
         elif self.showing == "load":
             self.init_load_game(object_id)
 
@@ -51,7 +49,7 @@ class MainMenuScreen(Screen):
         # set the flag
         self.showing = "main_menu"
 
-        # override to remove option for antechamber
+        # set options
         self.options = {
             "new_game": ("New game", self.init_new_game),
             "init_load_game": ("Load game", self.setup_load_game),
@@ -80,10 +78,15 @@ class MainMenuScreen(Screen):
             "cancel": ("Go Back", self.setup_main_menu),
         }
 
+        saves = {}
         # get all save files as options
         for filename in os.listdir(os.getcwd() + "/" + SAVE_PATH):
-            filename = filename.replace(".json", "")
-            self.options[filename] = (filename, None)
+            filename = filename.replace(".json", "")  # cant have the . in the object id
+            saves[filename] = (filename, None)
+
+        # sort saves
+        for key, value in sorted(saves.items()):
+            self.options[key] = value
 
         # create the screen
         self.create_option_section(self.button_x, self.option_text_x,
@@ -100,7 +103,8 @@ class MainMenuScreen(Screen):
         components = [
             IsPlayerControlled(),
             CastleStaff([]),
-            Hourglass()
+            Hourglass(),
+            Edicts(["conscription"])
         ]
         from scripts import world
         player_kingdom = world.create_entity(components)

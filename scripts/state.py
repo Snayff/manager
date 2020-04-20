@@ -2,10 +2,11 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 from typing import TYPE_CHECKING
 
 from scripts import world
-from scripts.constants import GAME_FPS, SAVE_PATH
+from scripts.constants import GAME_FPS, MAX_AUTOSAVES, SAVE_PATH
 from scripts.stores.state_data import state_data
 from scripts.stores.world_data import world_data
 
@@ -67,6 +68,7 @@ def save_game(is_auto_save: bool = False):
     Serialise the game data to a file
     """
     # get the info needed
+    full_save_path = os.getcwd() + "/" + SAVE_PATH
     save = {}
     save["days_passed"] = world_data.days_passed
     save["world"] = world.serialise()
@@ -78,11 +80,21 @@ def save_game(is_auto_save: bool = False):
     name = name.replace(" ", "_")  # clean name
     filename = f"{name}_{date[2]}_{date[1]}_{date[0]}"
 
-    # if is autosave add prefix
+    # manage autosaves
     if is_auto_save:
+        # add prefix
         filename = "autosave_" + filename
 
-        # TODO - clear old autosaves
+        # clear old autosaves
+        existing_autosaves = []
+        for _filename in os.listdir(full_save_path):
+            if f"autosave_{name}" in _filename:
+                existing_autosaves.append(_filename)
+        existing_autosaves = sorted(existing_autosaves)
+        while len(existing_autosaves) > MAX_AUTOSAVES - 1:  # -1 to handle the offset
+            _filename = existing_autosaves.pop(0)
+            os.remove(full_save_path + "/" + _filename)
+
 
     # write to json
     with open(SAVE_PATH + filename + ".json", "w") as file:

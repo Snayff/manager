@@ -6,7 +6,8 @@ from typing import TYPE_CHECKING, Type
 import pygame
 
 from scripts import state, ui, world
-from scripts.components import Demographic, Hourglass, Population
+from scripts.components import Edicts, Hourglass, Population
+from scripts.demographics import Demographic
 from scripts.constants import DAYS_IN_YEAR, MINUTES_IN_DAY
 
 if TYPE_CHECKING:
@@ -18,6 +19,7 @@ def process_input(event: pygame.event.Event):
         if event.key == pygame.K_ESCAPE:
             ui.swap_to_main_menu_screen()
 
+
 def process_end_of_day():
     """
     Handle the transition of time.
@@ -28,7 +30,10 @@ def process_end_of_day():
             accrued_births = demographic.accrued_births
             accrued_deaths = demographic.accrued_deaths
 
-            accrued_births += demographic.birth_rate_in_year / DAYS_IN_YEAR
+            # get birth rate
+            birth_rate = world.get_modified_stat(kingdom, "birth_rate", demographic.birth_rate_in_year)
+
+            accrued_births += birth_rate / DAYS_IN_YEAR
             accrued_deaths += demographic.amount / (demographic.lifespan * DAYS_IN_YEAR)
 
             # handle births
@@ -38,7 +43,9 @@ def process_end_of_day():
 
                 # add births
                 demographic.amount += births * random.randint(demographic.min_brood, demographic.max_brood)
-                demographic.accrued_births = accrued_births
+
+            # update accrued births
+            demographic.accrued_births = accrued_births
 
             # handle deaths of old age
             if accrued_deaths >= 1:
@@ -47,7 +54,9 @@ def process_end_of_day():
 
                 # remove deaths
                 demographic.amount -= deaths
-                demographic.accrued_deaths = accrued_deaths
+
+            # update accrued deaths
+            demographic.accrued_deaths = accrued_deaths
 
     # allocate available time
     player_kingdom = world.get_player_kingdom()

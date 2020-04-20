@@ -1,12 +1,8 @@
 from __future__ import annotations
 
-import logging
 from typing import TYPE_CHECKING, Type
-
-import pygame
-import pygame_gui
 from scripts import ui, world
-from scripts.components import Demographic, Details, Land, Demesne, Population
+from scripts.components import Details, Land, Demesne, Population
 from scripts.constants import LINE_BREAK
 from scripts.ui_elements.screen import Screen
 
@@ -14,6 +10,8 @@ if TYPE_CHECKING:
     from typing import Union, Optional, Any, Tuple, Dict, List
     from pygame.rect import Rect
     from pygame_gui import UIManager
+    from pygame.event import Event
+
 
 class SelectionScreen(Screen):
     """
@@ -22,13 +20,11 @@ class SelectionScreen(Screen):
     def __init__(self, manager: UIManager, rect: Rect):
         super().__init__(manager, rect)
 
-        self.showing = ""  # flag to determine what action happens on press
-        self.options = {}  # remove goto council
         self.header_text = "On the other side of the Rift"
 
-        self.setup_select_race()
+        self.setup_default_screen()
 
-    def handle_event(self, event: pygame.event.Event):
+    def handle_event(self, event: Event):
         """
         Handle events
         """
@@ -40,21 +36,19 @@ class SelectionScreen(Screen):
             self.select_name(event.text)
             ui.swap_to_antechamber_screen()
 
-        # if we selected a dodgy option, do nothing
-        if not self.is_option_implemented(object_id):
-            return None
-
-        # possible options, in reverse order to prevent selection being applicable to more than one
-        if self.showing == "race":
-            self.select_race(object_id)
-            self.setup_select_land()
-        elif self.showing == "land":
-            self.select_land(object_id)
-            self.setup_select_kingdom_name()
+        # ensure we didnt select a dodgy option
+        if self.is_option_implemented(object_id):
+            # possible options, in reverse order to prevent selection being applicable to more than one
+            if self.showing == "race":
+                self.select_race(object_id)
+                self.setup_select_land()
+            elif self.showing == "land":
+                self.select_land(object_id)
+                self.setup_select_kingdom_name()
 
     ############################ SETUP ##############################
 
-    def setup_select_race(self):
+    def setup_default_screen(self):
         """
         Set up the screen for selection race
         """
@@ -68,9 +62,9 @@ class SelectionScreen(Screen):
                     "else survived the journey through the Rift you look around." + LINE_BREAK
 
         # get races
-        races = world.get_all_race_data()
+        races = world.get_all_demographics()
         for key, race in races.items():
-            self.options[key] = (f"{str(race['amount'])} {race['name']}s from {race['homeworld']}.", None)
+            self.options[key] = (f"{str(race.initial_amount)} {race.name}s from {race.homeworld}.", None)
 
         # create the screen
         self.create_header(self.header_text)
@@ -137,9 +131,10 @@ class SelectionScreen(Screen):
         Add the race component to the player
         """
         player_kingdom = world.get_player_kingdom()
-        race_data = world.get_race_data(race_name)
-        world.add_component(player_kingdom, Population([Demographic(**race_data)]))
+        demographic = world.get_demographic(race_name)
 
+        # create an instance of the race and add to the population component
+        world.add_component(player_kingdom, Population([demographic()]))
 
     def select_land(self, land_name: str):
         """

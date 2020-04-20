@@ -5,8 +5,10 @@ from typing import TYPE_CHECKING, Type, TypeVar
 from snecs import Component, Query, new_entity
 from snecs.typedefs import EntityID
 from scripts import debug
-from scripts.components import Details, IsPlayerControlled
+from scripts.components import Details, Edicts, IsPlayerControlled
 from scripts.constants import DAYS_IN_SEASON, DAYS_IN_YEAR, SEASONS_IN_YEAR
+from scripts.demographics import Demographic
+from scripts.edicts import Edict
 from scripts.stores.world_data import world_data
 
 if TYPE_CHECKING:
@@ -75,18 +77,25 @@ def get_name(entity: EntityID) -> str:
     return name
 
 
-def get_all_race_data() -> Dict[str, Dict[str, Union[int, str]]]:
+def get_all_demographics() -> Dict[str, Type[Demographic]]:
     """
     Get the base data for all races
     """
     return world_data.races
 
 
-def get_race_data(race_name: str) -> Dict[str, Union[int, str]]:
+def get_demographic(race_key: str) -> Type[Demographic]:
     """
     Get the base data for a race
     """
-    return world_data.races[race_name]
+    return world_data.races[race_key]
+
+
+def get_edict(edict_key: str) -> Type[Edict]:
+    """
+    Get the base data for an edict
+    """
+    return world_data.edicts[edict_key]
 
 
 def get_all_land_data() -> Dict[str, Dict[str, str]]:
@@ -117,6 +126,20 @@ def get_current_date() -> Tuple[int, int, int]:
     current_year += 1
 
     return current_day, current_season, current_year
+
+
+def get_modified_stat(entity: EntityID, stat: str, base_value: Union[int, float]) -> Union[int, float]:
+    """
+    Modifies a stat by all applicable edicts
+    """
+    edicts = get_entitys_component(entity, Edicts)
+    environment = {stat: base_value}
+
+    for edict in edicts.active_edicts:
+        if "birth_rate" in edict.affects:
+            edict.apply(environment)
+
+    return environment[stat]
 
 
 ################################ SET - AMEND AN EXISTING SOMETHING ###############################
