@@ -117,8 +117,12 @@ class Screen(ABC):
         self.elements["panel"] = panel
 
         # loop options and extract text and id
-        for _id, (text, *rest) in self.options.items():
-            options_text += text + LINE_BREAK + LINE_BREAK
+        for _id, option in self.options.items():
+            if option.time_cost > 0:
+                time_prefix = "(" + str(option.time_cost) + ") "
+            else:
+                time_prefix = ""
+            options_text += time_prefix + option.text + LINE_BREAK + LINE_BREAK
             option_button = UIButton(Rect((button_x, y + offset_y), (button_width, button_height)),
                                      str(count), self.manager, object_id=_id, parent_element=panel)
             count += 1
@@ -162,7 +166,7 @@ class Screen(ABC):
         # get the text
         player_kingdom = world.get_player_kingdom()
         hourglass = world.get_entitys_component(player_kingdom, Hourglass)
-        text = f"{str(hourglass.minutes_available)} minutes before sunset"
+        text = f"{str(hourglass.hours_available)} minutes before sunset"
 
         # create the label
         rect = Rect((-self.hourglass_width - self.section_start_x, self.choice_y), (self.hourglass_width,

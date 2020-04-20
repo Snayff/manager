@@ -3,7 +3,7 @@ from __future__ import annotations
 import attr
 from typing import TYPE_CHECKING, List
 from snecs import RegisteredComponent
-from scripts.constants import MINUTES_IN_DAY
+from scripts.constants import HOURS_IN_DAY
 from scripts.demographics import Demographic
 from scripts.edicts import Edict
 
@@ -111,11 +111,11 @@ class CastleStaff(List[StaffMember], RegisteredComponent):
 
 
 class Hourglass(RegisteredComponent):
-    def __init__(self, minutes_available: int = MINUTES_IN_DAY):
-        self.minutes_available = minutes_available
+    def __init__(self, hours_available: float = HOURS_IN_DAY):
+        self.hours_available: float = hours_available
 
     def serialize(self):
-        return self.minutes_available
+        return self.hours_available
 
     @classmethod
     def deserialize(cls, serialized):

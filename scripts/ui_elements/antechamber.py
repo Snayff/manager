@@ -51,7 +51,7 @@ class AntechamberScreen(Screen):
             "construction": ui.Option("*Rookery - Demand construction", None),
             "diplomats": ui.Option("*Rookery - Instruct diplomats", None),
             "spy": ui.Option("*Rookery - Spy Network", None),
-            "end_day": ui.Option("Chambers - End the day", processors.process_end_of_day)
+            "end_day": ui.Option("Chambers - End the day", self.end_day)
         }
         # TODO - combine duplicate instructions
 
@@ -61,3 +61,10 @@ class AntechamberScreen(Screen):
                                    self.button_height, self.option_text_width, self.max_section_height)
         self.create_choice_field(allowed_str=False)
         self.create_hourglass_display()
+
+    def end_day(self):
+        """
+        Trigger the processors and refresh the screen
+        """
+        processors.process_end_of_day()
+        self.setup_default_screen()

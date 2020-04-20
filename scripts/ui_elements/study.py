@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Type
 from scripts import ui, world
 from scripts.components import Edicts
+from scripts.constants import EDICT_COST
 from scripts.ui_elements.screen import Screen
 
 if TYPE_CHECKING:
@@ -39,10 +40,17 @@ class StudyScreen(Screen):
                 if object_id == "antechamber":
                     self.call_options_function(object_id)
 
-                # if the second element of the tuple (possible) is True
-                elif self.options[object_id][1]:
+                # if the second element of the tuple (possible) is True. set when assigning options.
+                elif self.options[object_id].func:
+
                     # add the edict
                     self.toggle_edict(object_id)
+
+                    # pay for it
+                    player_kingdom = world.get_player_kingdom()
+                    world.spend_daytime(player_kingdom, self.options[object_id].time_cost)
+
+
 
     def setup_default_screen(self):
         """
@@ -63,14 +71,14 @@ class StudyScreen(Screen):
         player_kingdom = world.get_player_kingdom()
         edicts = world.get_entitys_component(player_kingdom, Edicts)
         for edict_name in edicts.known_edicts:
-            edict = world.get_edict(edict_name)
+            edict = world.get_edict(edict_name)(player_kingdom)  # need to init to compare properly
 
             # is it active?
             if edict in edicts.active_edicts:
                 possible = True
                 prefix = "Revoke "
                 description = edict.revoke_description
-            elif edict.is_requirement_met(player_kingdom):
+            elif edict.is_requirement_met(player_kingdom) and world.can_afford_time_cost(player_kingdom, EDICT_COST):
                 # not active but possible
                 possible = True
                 prefix = "Enact "
@@ -80,7 +88,7 @@ class StudyScreen(Screen):
                 prefix = "[Requirement not met]"
                 description = edict.enact_description
 
-            self.options[edict_name] = ui.Option(prefix + edict_name + " - " + description, possible, )
+            self.options[edict_name] = ui.Option(prefix + edict_name + " - " + description, possible, EDICT_COST)
 
         # create the info text
         info_text = "You rifle through your scattered parchments, hearing the crack of old vellum with each wave of "\

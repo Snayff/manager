@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Type, TypeVar
 from snecs import Component, Query, new_entity
 from snecs.typedefs import EntityID
 from scripts import debug
-from scripts.components import Details, Edicts, IsPlayerControlled
+from scripts.components import Details, Edicts, Hourglass, IsPlayerControlled
 from scripts.constants import BIRTH_RATE, DAYS_IN_SEASON, DAYS_IN_YEAR, SEASONS_IN_YEAR
 from scripts.demographics import Demographic
 from scripts.edicts import Edict
@@ -151,6 +151,16 @@ def set_days_passed(days_passed: int):
     world_data.days_passed = days_passed
 
 
+################################ CHECKS - RETURN BOOL ###############################
+
+def can_afford_time_cost(entity: EntityID, hours_to_spend: float = 1.0):
+    hourglass = get_entitys_component(entity, Hourglass)
+    if hourglass.hours_available > hours_to_spend:
+        return True
+    else:
+        return False
+
+
 ################################ ACTIONS - CHANGE STATE - RETURN NOTHING ###############################
 
 def add_component(entity: EntityID, component: Component):
@@ -160,8 +170,13 @@ def add_component(entity: EntityID, component: Component):
     snecs.add_component(entity, component)
 
 
-def pass_days(days: int = 1):
+def progress_days(days: int = 1):
     """
     Move time forwards by days
     """
     world_data.days_passed += days
+
+
+def spend_daytime(entity: EntityID, hours_spent: float = 1):
+    hourglass = get_entitys_component(entity, Hourglass)
+    hourglass.hours_available = max(0, hourglass.hours_available - hours_spent)

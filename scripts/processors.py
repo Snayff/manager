@@ -8,7 +8,7 @@ import pygame
 from scripts import state, ui, world
 from scripts.components import Edicts, Hourglass, Population
 from scripts.demographics import Demographic
-from scripts.constants import BIRTH_RATE, DAYS_IN_YEAR, MINUTES_IN_DAY
+from scripts.constants import BIRTH_RATE, DAYS_IN_YEAR, HOURS_IN_DAY
 
 if TYPE_CHECKING:
     from typing import Union, Optional, Any, Tuple, Dict, List
@@ -61,10 +61,10 @@ def process_end_of_day():
     # allocate available time
     player_kingdom = world.get_player_kingdom()
     hourglass = world.get_entitys_component(player_kingdom, Hourglass)
-    hourglass.minutes_available = MINUTES_IN_DAY
+    hourglass.hours_available = HOURS_IN_DAY
 
     # manage movement of time
-    world.pass_days(1)
+    world.progress_days(1)
 
     # save the game
     state.save_game(is_auto_save=True)
