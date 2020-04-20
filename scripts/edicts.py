@@ -5,6 +5,7 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Type
 from snecs.typedefs import EntityID
 
+from scripts.constants import BIRTH_RATE
 
 if TYPE_CHECKING:
     from typing import Union, Optional, Any, Tuple, Dict, List
@@ -58,7 +59,7 @@ class Conscription(Edict):
     name = "Conscription"
     enact_description = "Put their bodies to work in our service."
     revoke_description = "Return them to the fields and homes."
-    affects = ["birth_rate"]
+    affects = [BIRTH_RATE]
     birth_reduction_rate = 0.12
 
     @classmethod
@@ -73,6 +74,6 @@ class Conscription(Edict):
         return f"Birthrate no longer decreased by {str(self.birth_reduction_rate)}."
 
     def apply(self, environment: Dict[str, Union[int, float]]):
-        environment["birth_rate"] = environment["birth_rate"] * (1 - self.birth_reduction_rate)
+        environment[BIRTH_RATE] = environment[BIRTH_RATE] * (1 - self.birth_reduction_rate)
 
 

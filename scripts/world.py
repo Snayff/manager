@@ -6,7 +6,7 @@ from snecs import Component, Query, new_entity
 from snecs.typedefs import EntityID
 from scripts import debug
 from scripts.components import Details, Edicts, IsPlayerControlled
-from scripts.constants import DAYS_IN_SEASON, DAYS_IN_YEAR, SEASONS_IN_YEAR
+from scripts.constants import BIRTH_RATE, DAYS_IN_SEASON, DAYS_IN_YEAR, SEASONS_IN_YEAR
 from scripts.demographics import Demographic
 from scripts.edicts import Edict
 from scripts.stores.world_data import world_data
@@ -136,7 +136,7 @@ def get_modified_stat(entity: EntityID, stat: str, base_value: Union[int, float]
     environment = {stat: base_value}
 
     for edict in edicts.active_edicts:
-        if "birth_rate" in edict.affects:
+        if BIRTH_RATE in edict.affects:
             edict.apply(environment)
 
     return environment[stat]

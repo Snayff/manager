@@ -8,7 +8,7 @@ import pygame
 from scripts import state, ui, world
 from scripts.components import Edicts, Hourglass, Population
 from scripts.demographics import Demographic
-from scripts.constants import DAYS_IN_YEAR, MINUTES_IN_DAY
+from scripts.constants import BIRTH_RATE, DAYS_IN_YEAR, MINUTES_IN_DAY
 
 if TYPE_CHECKING:
     from typing import Union, Optional, Any, Tuple, Dict, List
@@ -31,7 +31,7 @@ def process_end_of_day():
             accrued_deaths = demographic.accrued_deaths
 
             # get birth rate
-            birth_rate = world.get_modified_stat(kingdom, "birth_rate", demographic.birth_rate_in_year)
+            birth_rate = world.get_modified_stat(kingdom, BIRTH_RATE, demographic.birth_rate_in_year)
 
             accrued_births += birth_rate / DAYS_IN_YEAR
             accrued_deaths += demographic.amount / (demographic.lifespan * DAYS_IN_YEAR)

@@ -6,7 +6,7 @@ from snecs.typedefs import EntityID
 
 from scripts import ui, world
 from scripts.components import CastleStaff, Details, Edicts, IsPlayerControlled, Demesne, Population
-from scripts.constants import LINE_BREAK
+from scripts.constants import BIRTH_RATE, LINE_BREAK
 from scripts.ui_elements.screen import Screen
 
 if TYPE_CHECKING:
@@ -99,7 +99,7 @@ class CouncilScreen(Screen):
         population = world.get_entitys_component(player_kingdom, Population)
         info_text = "-- Subjects --" + LINE_BREAK
         for demo in population:
-            birth_rate = world.get_modified_stat(player_kingdom, "birth_rate", demo.birth_rate_in_year)
+            birth_rate = world.get_modified_stat(player_kingdom, BIRTH_RATE, demo.birth_rate_in_year)
             info_text += demo.name + ": " + str(demo.amount) + " (" + str(int(birth_rate)) + " per year), "
         return info_text
 

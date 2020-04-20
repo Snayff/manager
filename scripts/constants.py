@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Type
 if TYPE_CHECKING:
     from typing import Union, Optional, Any, Tuple, Dict, List
 
-VERSION = "0.0.1"
+VERSION = "0.0.3"
 
 SAVE_PATH = "saves/"
 MAX_AUTOSAVES = 3
@@ -24,3 +24,4 @@ DAYS_IN_SEASON = 30
 SEASONS_IN_YEAR = 4
 DAYS_IN_YEAR = DAYS_IN_SEASON * SEASONS_IN_YEAR
 
+BIRTH_RATE = "birth_rate"
