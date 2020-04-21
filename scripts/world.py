@@ -142,6 +142,20 @@ def get_modified_stat(entity: EntityID, stat: str, base_value: Union[int, float]
     return environment[stat]
 
 
+def get_land_size_modifier(size: str) -> float:
+    """
+    Get the numeric modifier value from the size string
+    """
+    return world_data.land_sizes[size]
+
+
+def get_days_since(day: int) -> int:
+    """
+    Get the number of days since the day given
+    """
+    return world_data.days_passed - day
+
+
 ################################ SET - AMEND AN EXISTING SOMETHING ###############################
 
 def set_days_passed(days_passed: int):

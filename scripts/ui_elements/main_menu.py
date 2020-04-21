@@ -98,6 +98,8 @@ class MainMenuScreen(Screen):
         """
         Create new game data and swap to selection screen
         """
+        # TODO - clear world
+
         # create the player entity
         components = [
             IsPlayerControlled(),
@@ -122,4 +124,6 @@ class MainMenuScreen(Screen):
         """
         Change the game state to EXIT
         """
+        state.save_game(True)
+
         state.set_new(EXIT)

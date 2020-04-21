@@ -3,6 +3,7 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING, Type
 
+from scripts.constants import AVERAGE, LARGE, SMALL
 from scripts.demographics import Demographic, Goblin, Shoom
 from scripts.edicts import Conscription, Edict
 
@@ -18,6 +19,7 @@ class _WorldDataStore:
         # static values
         self.races: Dict[str, Type[Demographic]] = self._load_race_values()
         self.lands: Dict[str, Dict[str, str]] = self._load_land_values()
+        self.land_sizes: Dict[str, float] = self._load_land_size_modifiers()
         self.edicts: Dict[str, Type[Edict]] = self._load_edicts()
 
         # volatile info
@@ -48,13 +50,13 @@ class _WorldDataStore:
                 "key": "black_moors",
                 "name": "Black Moors",
                 "terrain": "grassland",
-                "size": "small"
+                "size": SMALL
             },
             "the_grove": {
                 "key": "the_grove",
                 "name": "The Grove",
                 "terrain": "woods",
-                "size": "medium"
+                "size": AVERAGE
             }
         }
         return lands
@@ -66,6 +68,17 @@ class _WorldDataStore:
         }
 
         return edicts
+
+    def _load_land_size_modifiers(self) -> Dict[str, float]:
+        """
+        Load the modifiers for each land size
+        """
+        sizes = {
+            SMALL: 0.5,  # small worth half of average
+            AVERAGE: 1.0,  # the default size
+            LARGE: 2.0
+        }
+        return sizes
 
 
 world_data = _WorldDataStore()

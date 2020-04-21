@@ -137,11 +137,11 @@ class Edicts(RegisteredComponent):
     def serialize(self):
         known_dict = {}
         active_dict = {}
-        for edict_name in self.known_edicts:
-            known_dict[edict_name] = edict_name
+        for edict_key in self.known_edicts:
+            known_dict[edict_key] = edict_key
 
         for edict in self.active_edicts:
-            active_dict[edict.name] = attr.asdict(edict)
+            active_dict[edict.key] = attr.asdict(edict)
 
         _dict = {
             "known_edicts": known_dict,

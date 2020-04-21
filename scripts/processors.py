@@ -50,6 +50,8 @@ def process_end_of_day() -> str:
                 # add births
                 demographic.amount += births * random.randint(demographic.min_brood, demographic.max_brood)
                 _update += ", born: " + str(births)
+            else:
+                _update += ", born: 0"
 
             # update accrued births
             demographic.accrued_births = accrued_births
@@ -63,6 +65,8 @@ def process_end_of_day() -> str:
                 demographic.amount -= deaths
 
                 _update += ", died: " + str(deaths)
+            else:
+                _update += ", died: 0"
 
             # update accrued deaths
             demographic.accrued_deaths = accrued_deaths
