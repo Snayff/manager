@@ -78,7 +78,6 @@ class Screen(ABC):
         """
         raise NotImplementedError
 
-
     def kill(self):
         """
         Delete all elements from self.elements and clear self.options.
@@ -166,7 +165,7 @@ class Screen(ABC):
         # get the text
         player_kingdom = world.get_player_kingdom()
         hourglass = world.get_entitys_component(player_kingdom, Hourglass)
-        text = f"{str(hourglass.hours_available)} minutes before sunset"
+        text = f"{str(hourglass.hours_available)} hours before sunset"
 
         # create the label
         rect = Rect((-self.hourglass_width - self.section_start_x, self.choice_y), (self.hourglass_width,

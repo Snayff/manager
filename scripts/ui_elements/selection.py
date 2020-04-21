@@ -5,11 +5,12 @@ from scripts import ui, world
 from scripts.components import Details, Land, Demesne, Population
 from scripts.constants import LINE_BREAK
 from scripts.ui_elements.screen import Screen
+from pygame_gui import UI_BUTTON_PRESSED, UI_TEXT_ENTRY_FINISHED
 
 if TYPE_CHECKING:
     from typing import Union, Optional, Any, Tuple, Dict, List
     from pygame.rect import Rect
-    from pygame_gui import UIManager, UI_BUTTON_PRESSED, UI_TEXT_ENTRY_FINISHED
+    from pygame_gui import UIManager
     from pygame.event import Event
 
 

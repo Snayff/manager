@@ -5,10 +5,11 @@ from scripts import ui, world
 from scripts.components import Edicts
 from scripts.constants import EDICT_COST
 from scripts.ui_elements.screen import Screen
+from pygame_gui import UI_BUTTON_PRESSED
 
 if TYPE_CHECKING:
     from typing import Union, Optional, Any, Tuple, Dict, List
-    from pygame_gui import UIManager, UI_BUTTON_PRESSED
+    from pygame_gui import UIManager
     from pygame.rect import Rect
     from pygame.event import Event
 
@@ -20,8 +21,6 @@ class StudyScreen(Screen):
         self.header_text = "Your Private Study"
 
         self.setup_default_screen()
-
-
 
     def handle_event(self, event: Event):
         """
@@ -53,8 +52,6 @@ class StudyScreen(Screen):
                         # pay for it
                         player_kingdom = world.get_player_kingdom()
                         world.spend_daytime(player_kingdom, self.options[object_id].time_cost)
-
-
 
     def setup_default_screen(self):
         """

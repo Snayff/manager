@@ -3,10 +3,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Type
 from scripts import processors, ui
 from scripts.ui_elements.screen import Screen
+from pygame_gui import UI_BUTTON_PRESSED
 
 if TYPE_CHECKING:
     from typing import Union, Optional, Any, Tuple, Dict, List
-    from pygame_gui import UIManager, UI_BUTTON_PRESSED
+    from pygame_gui import UIManager
     from pygame.rect import Rect
     from pygame.event import Event
 
@@ -29,6 +30,12 @@ class AntechamberScreen(Screen):
 
         # buttons presses
         if event.user_type == UI_BUTTON_PRESSED:
+
+            # check if the message window has been dismissed
+            if "message_window" in object_id:
+                # refresh the screen
+                self.setup_default_screen()
+
             #  ensure we didnt select a dodgy option
             if self.is_option_implemented(object_id):
                 self.call_options_function(object_id)
@@ -67,5 +74,5 @@ class AntechamberScreen(Screen):
         """
         Trigger the processors and refresh the screen
         """
-        processors.process_end_of_day()
-        self.setup_default_screen()
+        update = processors.process_end_of_day()
+        self.create_message(update, "A New Day Dawns")

@@ -2,16 +2,18 @@ from __future__ import annotations
 
 import os
 from typing import TYPE_CHECKING, Type
+
+from pygame.event import Event
 from scripts import state, ui
 from scripts.components import CastleStaff, Edicts, Hourglass, IsPlayerControlled
 from scripts.constants import EXIT, SAVE_PATH
 from scripts.ui_elements.screen import Screen
+from pygame_gui import UI_BUTTON_PRESSED
 
 if TYPE_CHECKING:
     from typing import Union, Optional, Any, Tuple, Dict, List
     from pygame.rect import Rect
-    from pygame_gui import UIManager, UI_BUTTON_PRESSED
-    import pygame
+    from pygame_gui import UIManager
 
 
 class MainMenuScreen(Screen):
@@ -20,7 +22,7 @@ class MainMenuScreen(Screen):
 
         self.setup_main_menu()
 
-    def handle_event(self, event: pygame.event.Event):
+    def handle_event(self, event: Event):
         """
         Handle events
         """

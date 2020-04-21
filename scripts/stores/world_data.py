@@ -22,6 +22,7 @@ class _WorldDataStore:
 
         # volatile info
         self.days_passed: int = 1
+        self.calendar: Dict[str, List] = {}
 
         logging.info(f"_WorldDataStore initialised.")
 

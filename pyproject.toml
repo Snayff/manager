@@ -13,6 +13,7 @@ attrs = "^19.3.0"
 
 [tool.poetry.dev-dependencies]
 mypy = "^0.770"
+isort = {version = "^4.3.21", extras = ["pyproject"]}
 
 [build-system]
 requires = ["poetry>=0.12"]

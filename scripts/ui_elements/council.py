@@ -1,17 +1,16 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Type
-
 from snecs.typedefs import EntityID
-
 from scripts import ui, world
 from scripts.components import CastleStaff, Details, Edicts, IsPlayerControlled, Demesne, Population
 from scripts.constants import BIRTH_RATE, LINE_BREAK
 from scripts.ui_elements.screen import Screen
+from pygame_gui import UI_BUTTON_PRESSED
 
 if TYPE_CHECKING:
     from typing import Union, Optional, Any, Tuple, Dict, List
-    from pygame_gui import UIManager, UI_BUTTON_PRESSED
+    from pygame_gui import UIManager
     from pygame.rect import Rect
     from pygame.event import Event
 

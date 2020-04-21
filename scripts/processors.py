@@ -20,13 +20,19 @@ def process_input(event: pygame.event.Event):
             ui.swap_to_main_menu_screen()
 
 
-def process_end_of_day():
+def process_end_of_day() -> str:
     """
-    Handle the transition of time.
+    Handle the transition of time. Returns string of updates
     """
+    player_kingdom = world.get_player_kingdom()
+    update_text = ""
+
     # births and deaths
     for kingdom, (population, ) in world.get_components([Population]):
+        _update = ""
         for demographic in population:
+            _update += demographic.name
+
             accrued_births = demographic.accrued_births
             accrued_deaths = demographic.accrued_deaths
 
@@ -43,6 +49,7 @@ def process_end_of_day():
 
                 # add births
                 demographic.amount += births * random.randint(demographic.min_brood, demographic.max_brood)
+                _update += ", born: " + str(births)
 
             # update accrued births
             demographic.accrued_births = accrued_births
@@ -55,11 +62,16 @@ def process_end_of_day():
                 # remove deaths
                 demographic.amount -= deaths
 
+                _update += ", died: " + str(deaths)
+
             # update accrued deaths
             demographic.accrued_deaths = accrued_deaths
 
+        # if its the player note the update
+        if kingdom == player_kingdom:
+            update_text = _update
+
     # allocate available time
-    player_kingdom = world.get_player_kingdom()
     hourglass = world.get_entitys_component(player_kingdom, Hourglass)
     hourglass.hours_available = HOURS_IN_DAY
 
@@ -68,3 +80,5 @@ def process_end_of_day():
 
     # save the game
     state.save_game(is_auto_save=True)
+
+    return update_text
