@@ -6,7 +6,7 @@ from scripts.ui_elements.screen import Screen
 
 if TYPE_CHECKING:
     from typing import Union, Optional, Any, Tuple, Dict, List
-    from pygame_gui import UIManager
+    from pygame_gui import UIManager, UI_BUTTON_PRESSED
     from pygame.rect import Rect
     from pygame.event import Event
 
@@ -27,10 +27,11 @@ class AntechamberScreen(Screen):
         # get the id
         object_id = self.get_object_id(event)
 
-        #  ensure we didnt select a dodgy option
-        if self.is_option_implemented(object_id):
-            self.call_options_function(object_id)
-
+        # buttons presses
+        if event.user_type == UI_BUTTON_PRESSED:
+            #  ensure we didnt select a dodgy option
+            if self.is_option_implemented(object_id):
+                self.call_options_function(object_id)
 
     def setup_default_screen(self):
         """

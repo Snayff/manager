@@ -10,7 +10,7 @@ from scripts.ui_elements.screen import Screen
 if TYPE_CHECKING:
     from typing import Union, Optional, Any, Tuple, Dict, List
     from pygame.rect import Rect
-    from pygame_gui import UIManager
+    from pygame_gui import UIManager, UI_BUTTON_PRESSED
     import pygame
 
 
@@ -27,16 +27,14 @@ class MainMenuScreen(Screen):
         # get the id
         object_id = self.get_object_id(event)
 
-        # if we selected a dodgy option, do nothing
-        if not self.is_option_implemented(object_id):
-            return None
-
-        if self.showing == "main_menu":
-            self.call_options_function(object_id)
-        elif self.showing == "load" and object_id == "cancel":
-            self.call_options_function(object_id)
-        elif self.showing == "load":
-            self.init_load_game(object_id)
+        # buttons presses
+        if event.user_type == UI_BUTTON_PRESSED:
+            # ensure we didnt select a dodgy option
+            if self.is_option_implemented(object_id):
+                if self.showing == "main_menu" or (self.showing == "load" and object_id == "cancel"):
+                    self.call_options_function(object_id)
+                elif self.showing == "load":
+                    self.init_load_game(object_id)
 
     def setup_main_menu(self):
         """

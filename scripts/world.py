@@ -179,4 +179,4 @@ def progress_days(days: int = 1):
 
 def spend_daytime(entity: EntityID, hours_spent: float = 1):
     hourglass = get_entitys_component(entity, Hourglass)
-    hourglass.hours_available = max(0, hourglass.hours_available - hours_spent)
+    hourglass.hours_available = max(0.0, hourglass.hours_available - hours_spent)

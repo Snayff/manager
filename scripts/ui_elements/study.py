@@ -8,9 +8,10 @@ from scripts.ui_elements.screen import Screen
 
 if TYPE_CHECKING:
     from typing import Union, Optional, Any, Tuple, Dict, List
-    from pygame_gui import UIManager
+    from pygame_gui import UIManager, UI_BUTTON_PRESSED
     from pygame.rect import Rect
     from pygame.event import Event
+
 
 class StudyScreen(Screen):
     def __init__(self, manager: UIManager, rect: Rect):
@@ -29,26 +30,29 @@ class StudyScreen(Screen):
         # get the id
         object_id = self.get_object_id(event)
 
-        # check if the message window has been dismissed
-        if "message_window" in object_id:
-            # refresh the screen
-            self.setup_default_screen()
+        # buttons presses
+        if event.user_type == UI_BUTTON_PRESSED:
 
-        #  ensure we didnt select a dodgy option
-        if self.is_option_implemented(object_id):
-            if self.showing == "study":
-                if object_id == "antechamber":
-                    self.call_options_function(object_id)
+            # check if the message window has been dismissed
+            if "message_window" in object_id:
+                # refresh the screen
+                self.setup_default_screen()
 
-                # if the second element of the tuple (possible) is True. set when assigning options.
-                elif self.options[object_id].func:
+            #  ensure we didnt select a dodgy option
+            if self.is_option_implemented(object_id):
+                if self.showing == "study":
+                    if object_id == "antechamber":
+                        self.call_options_function(object_id)
 
-                    # add the edict
-                    self.toggle_edict(object_id)
+                    # if the second element of the tuple (possible) is True. set when assigning options.
+                    elif self.options[object_id].func:
 
-                    # pay for it
-                    player_kingdom = world.get_player_kingdom()
-                    world.spend_daytime(player_kingdom, self.options[object_id].time_cost)
+                        # add the edict
+                        self.toggle_edict(object_id)
+
+                        # pay for it
+                        player_kingdom = world.get_player_kingdom()
+                        world.spend_daytime(player_kingdom, self.options[object_id].time_cost)
 
 
 
