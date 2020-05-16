@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import attr
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING, List, Tuple
 from snecs import RegisteredComponent
 from scripts.constants import HOURS_IN_DAY
 from scripts.demographics import Demographic
@@ -186,3 +186,29 @@ class Resources(RegisteredComponent):
     @classmethod
     def deserialize(cls, serialized):
         return Resources(**serialized)
+
+
+class Knowledge(RegisteredComponent):
+    """
+    Information received,  what the kingdom knows.
+
+    Populated with duplicate members from other components. This is used to reflect what the Kingdom knows,
+    not the reality. All tuples are (value, day_updated)
+    """
+    def __init__(self):
+        # Resources
+        self.resource_update_day: int = 1
+        self.vittles: int = 0
+        self.wealth: int = 0
+        self.raw_materials: int = 0
+        self.refined_materials: int = 0
+        self.commodities: int = 0
+
+        # Demesne
+        self.demesne_update_day: int = 1
+        self.demesne: List[Land] = []
+
+        # Population
+        self.population_update_day: int = 1
+        self.population: List[Demographic] = []
+

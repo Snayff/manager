@@ -64,3 +64,17 @@ class Shoom(Demographic):
     lifespan = 100
 
     amount: int = initial_amount
+
+
+@attr.s(auto_attribs=True)
+class Pan(Demographic):
+    key = "pan"
+    name = "Pan"
+    homeworld = "TBC"
+    initial_amount = 30
+    birth_rate = 0.6
+    min_brood = 1
+    max_brood = 2
+    lifespan = 60
+
+    amount: int = initial_amount

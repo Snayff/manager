@@ -112,7 +112,7 @@ class StudyScreen(Screen):
         player_kingdom = world.get_player_kingdom()
         edicts = world.get_entitys_component(player_kingdom, Edicts)
         edict = world.get_edict(edict_name)
-        edict = edict(owning_entity=player_kingdom)  # This is throwing an unexpected arg error but is right.
+        edict = edict(owning_entity=player_kingdom)  # This is throwing an unexpected arg error but is correct.
 
         if edict in edicts.active_edicts:
             msg = edict.revoke()

@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Type, TypeVar
 from snecs import Component, Query, new_entity
 from snecs.typedefs import EntityID
 from scripts import debug
-from scripts.components import Details, Edicts, Hourglass, IsPlayerControlled
+from scripts.components import CastleStaff, Details, Edicts, Hourglass, IsPlayerControlled, Knowledge, Resources
 from scripts.constants import BIRTH_RATE, DAYS_IN_SEASON, DAYS_IN_YEAR, SEASONS_IN_YEAR
 from scripts.demographics import Demographic
 from scripts.edicts import Edict
@@ -40,6 +40,24 @@ def create_entity(components: List[Component] = None) -> EntityID:
     entity = new_entity(_components)
 
     return entity
+
+
+def create_kingdom() -> EntityID:
+    """
+    Create a basic kingdom with empty components
+    """
+    default_components = [
+        IsPlayerControlled(),
+        CastleStaff([]),
+        Hourglass(),
+        Edicts(["conscription"]),
+        Knowledge(),
+        Resources()
+    ]
+
+    kingdom = create_entity(default_components)
+
+    return kingdom
 
 
 ############################# GET - RETURN AN EXISTING SOMETHING ###########################

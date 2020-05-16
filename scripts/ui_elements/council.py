@@ -3,8 +3,9 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Type
 from snecs.typedefs import EntityID
 from scripts import ui, world
-from scripts.components import CastleStaff, Details, Edicts, IsPlayerControlled, Demesne, Population
+from scripts.components import CastleStaff, Details, Edicts, IsPlayerControlled, Demesne, Knowledge, Population
 from scripts.constants import BIRTH_RATE, LINE_BREAK
+from scripts.demographics import Demographic
 from scripts.ui_elements.screen import Screen
 from pygame_gui import UI_BUTTON_PRESSED
 
@@ -95,9 +96,11 @@ class CouncilScreen(Screen):
         """
         Get the population info
         """
-        population = world.get_entitys_component(player_kingdom, Population)
+        knowledge = world.get_entitys_component(player_kingdom, Knowledge)
         info_text = "-- Subjects --" + LINE_BREAK
-        for demo in population:
+        info_text += "Last updated " + str(world.get_days_since(knowledge.population_update_day)) + "days ago."
+
+        for demo in knowledge.population:
             birth_rate = world.get_modified_stat(player_kingdom, BIRTH_RATE, demo.birth_rate_in_year)
             info_text += demo.name + ": " + str(demo.amount) + " (" + str(int(birth_rate)) + " per year), "
         return info_text
@@ -106,9 +109,11 @@ class CouncilScreen(Screen):
         """
         Get the land info
         """
-        lands = world.get_entitys_component(player_kingdom, Demesne)
+        knowledge = world.get_entitys_component(player_kingdom, Knowledge)
         info_text = "-- Demesne --" + LINE_BREAK
-        for land in lands:
+        info_text += "Last updated " + str(world.get_days_since(knowledge.demesne_update_day)) + "days ago."
+
+        for land in knowledge.demesne:
             info_text += land.name + ": " + land.size + ", "
         return info_text
 

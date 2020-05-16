@@ -4,7 +4,7 @@ import logging
 from typing import TYPE_CHECKING, Type
 
 from scripts.constants import AVERAGE, LARGE, SMALL
-from scripts.demographics import Demographic, Goblin, Shoom
+from scripts.demographics import Demographic, Goblin, Pan, Shoom
 from scripts.edicts import Conscription, Edict
 
 if TYPE_CHECKING:
@@ -29,14 +29,15 @@ class _WorldDataStore:
         logging.info(f"_WorldDataStore initialised.")
 
     ######################## LOAD VALUES ########################
-
+    # TODO - move data to definitions module
     def _load_race_values(self) -> Dict[str, Type[Demographic]]:
         """
         Set the initial race values
         """
         races = {
             "goblin": Goblin,
-            "shoom": Shoom
+            "shoom": Shoom,
+            "pan": Pan
         }
 
         return races

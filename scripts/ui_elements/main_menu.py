@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Type
 
 from pygame.event import Event
 from scripts import state, ui
-from scripts.components import CastleStaff, Edicts, Hourglass, IsPlayerControlled
+from scripts.components import CastleStaff, Edicts, Hourglass, IsPlayerControlled, Knowledge, Resources
 from scripts.constants import EXIT, SAVE_PATH
 from scripts.ui_elements.screen import Screen
 from pygame_gui import UI_BUTTON_PRESSED
@@ -101,14 +101,8 @@ class MainMenuScreen(Screen):
         # TODO - clear world
 
         # create the player entity
-        components = [
-            IsPlayerControlled(),
-            CastleStaff([]),
-            Hourglass(),
-            Edicts(["conscription"])
-        ]
         from scripts import world
-        player_kingdom = world.create_entity(components)
+        player_kingdom = world.create_kingdom()
 
         ui.swap_to_selection_screen()
 
