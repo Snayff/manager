@@ -98,11 +98,13 @@ class CouncilScreen(Screen):
         """
         knowledge = world.get_entitys_component(player_kingdom, Knowledge)
         info_text = "-- Subjects --" + LINE_BREAK
-        info_text += "Last updated " + str(world.get_days_since(knowledge.population_update_day)) + "days ago."
+        info_text += "Last updated " + str(world.get_days_since(knowledge.population_update_day)) + " days ago." +\
+                     LINE_BREAK
 
         for demo in knowledge.population:
             birth_rate = world.get_modified_stat(player_kingdom, BIRTH_RATE, demo.birth_rate_in_year)
-            info_text += demo.name + ": " + str(demo.amount) + " (" + str(int(birth_rate)) + " per year), "
+            info_text += demo.name + ": " + str(demo.amount) + " (" + str(int(birth_rate)) + " per year), " + \
+                         LINE_BREAK
         return info_text
 
     def get_demesne_section_text(self, player_kingdom: EntityID) -> str:
@@ -111,10 +113,11 @@ class CouncilScreen(Screen):
         """
         knowledge = world.get_entitys_component(player_kingdom, Knowledge)
         info_text = "-- Demesne --" + LINE_BREAK
-        info_text += "Last updated " + str(world.get_days_since(knowledge.demesne_update_day)) + "days ago."
+        info_text += "Last updated " + str(world.get_days_since(knowledge.demesne_update_day)) + " days ago." +\
+                     LINE_BREAK
 
         for land in knowledge.demesne:
-            info_text += land.name + ": " + land.size + ", "
+            info_text += land.name + ": " + land.size + ", " + LINE_BREAK
         return info_text
 
     def get_staff_section_text(self, player_kingdom: EntityID) -> str:
@@ -124,7 +127,7 @@ class CouncilScreen(Screen):
         info_text = "-- Staff --" + LINE_BREAK
         staff = world.get_entitys_component(player_kingdom, CastleStaff)
         for member in staff:
-            info_text += member.name + ", your " + member.role + "."
+            info_text += member.name + ", your " + member.role + "." + LINE_BREAK
         return info_text
 
     def get_edict_section_text(self, player_kingdom: EntityID) -> str:
@@ -134,5 +137,5 @@ class CouncilScreen(Screen):
         info_text = "-- Active Edicts --" + LINE_BREAK
         edicts = world.get_entitys_component(player_kingdom, Edicts)
         for edict in edicts.active_edicts:
-            info_text += edict.name
+            info_text += edict.name + LINE_BREAK
         return info_text

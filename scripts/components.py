@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import attr
-from typing import TYPE_CHECKING, List, Tuple
+from typing import TYPE_CHECKING, List, Tuple, Type
 from snecs import RegisteredComponent
 from scripts.constants import HOURS_IN_DAY
 from scripts.demographics import Demographic
@@ -155,13 +155,13 @@ class Edicts(RegisteredComponent):
         known_edicts = []
         active_edicts = []
 
+        from scripts import world
         for key, inner_dict in serialized.items():
             if key == "known_edicts":
                 for edict_name in inner_dict.values():
                     known_edicts.append(edict_name)
             elif key == "active_edicts":
                 for _key, edict_values in inner_dict.items():
-                    from scripts import world
                     edict = world.get_edict(_key)
                     active_edicts.append(edict(**edict_values))
 
@@ -212,3 +212,45 @@ class Knowledge(RegisteredComponent):
         self.population_update_day: int = 1
         self.population: List[Demographic] = []
 
+    def serialize(self):
+        demesne_dict = {}
+        for land in self.demesne:
+            demesne_dict[land.key] = attr.asdict(land)
+
+        population_dict = {}
+        for demo in self.population:
+            population_dict[demo.key] = attr.asdict(demo)
+
+        _dict = {
+            "resource_update_day": self.resource_update_day,
+            "vittles": self.vittles,
+            "wealth": self.wealth,
+            "raw_materials": self.raw_materials,
+            "refined_materials": self.refined_materials,
+            "commodities": self.commodities,
+            "demesne_update_day": self.demesne_update_day,
+            "population_update_day": self.population_update_day,
+            "demesne": demesne_dict,
+            "population": population_dict
+        }
+
+    @classmethod
+    def deserialize(cls, serialized):
+        demesne = []
+        population = []
+        _dict = {}
+
+        for key, value in serialized.items():
+            if key == "demesne":
+                for land in value.values():
+                    demesne.append(Land(**land))
+            elif key == "population":
+                for demo in value.values():
+                    population.append(Demographic(**demo))
+            else:
+                _dict[key] = value
+
+        _dict["demesne"] = demesne
+        _dict["population"] = population
+
+        return Knowledge(**_dict)
