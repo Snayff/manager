@@ -1,11 +1,14 @@
 from __future__ import annotations
 
+import logging
+
 import snecs
 from typing import TYPE_CHECKING, Type, TypeVar
 from snecs import Component, Query, new_entity
 from snecs.typedefs import EntityID
 from scripts import debug
-from scripts.components import CastleStaff, Details, Edicts, Hourglass, IsPlayerControlled, Knowledge, Resources
+from scripts.components import CastleStaff, Demesne, Details, Edicts, Hourglass, IsPlayerControlled, Knowledge, \
+    Population, Resources
 from scripts.constants import BIRTH_RATE, DAYS_IN_SEASON, DAYS_IN_YEAR, SEASONS_IN_YEAR
 from scripts.demographics import Demographic
 from scripts.edicts import Edict
@@ -56,6 +59,9 @@ def create_kingdom() -> EntityID:
     ]
 
     kingdom = create_entity(default_components)
+
+    # update their knowledge so they have accurate info at the start
+    update_entitys_knowledge(kingdom, "all")
 
     return kingdom
 
@@ -146,6 +152,13 @@ def get_current_date() -> Tuple[int, int, int]:
     return current_day, current_season, current_year
 
 
+def get_days_passed() -> int:
+    """
+    Get the number of days passed since world inception.
+    """
+    return world_data.days_passed
+
+
 def get_modified_stat(entity: EntityID, stat: str, base_value: Union[int, float]) -> Union[int, float]:
     """
     Modifies a stat by all applicable edicts
@@ -212,3 +225,39 @@ def progress_days(days: int = 1):
 def spend_daytime(entity: EntityID, hours_spent: float = 1):
     hourglass = get_entitys_component(entity, Hourglass)
     hourglass.hours_available = max(0.0, hourglass.hours_available - hours_spent)
+
+
+def update_entitys_knowledge(entity: EntityID, new_knowledge: str):
+    """
+    Update an entity's knowledge to reflect the accurate and up to date information
+    """
+    knowledge = get_entitys_component(entity, Knowledge)
+    current_day = get_days_passed()
+
+    if new_knowledge == "resources" or new_knowledge == "all":
+        resources = get_entitys_component(entity, Resources)
+
+        knowledge.vittles = resources.vittles
+        knowledge.wealth = resources.wealth
+        knowledge.raw_materials = resources.raw_materials
+        knowledge.refined_materials = resources.refined_materials
+        knowledge.commodities = resources.commodities
+
+        knowledge.resource_update_day = current_day
+
+    elif new_knowledge == "demesne" or new_knowledge == "all":
+        demesne = get_entitys_component(entity, Demesne)
+
+        knowledge.demesne = demesne
+
+        knowledge.demesne_update_day = current_day
+
+    elif new_knowledge == "population" or new_knowledge == "all":
+        population = get_entitys_component(entity, Population)
+
+        knowledge.population = population
+
+        knowledge.population_update_day = current_day
+
+    else:
+        logging.warning(f"Knowledge not updated as given unexpected key, '{new_knowledge}'.")

@@ -15,6 +15,8 @@ if TYPE_CHECKING:
     from pygame.rect import Rect
     from pygame_gui import UIManager
 
+# TODO - separate main menu and options menu
+
 
 class MainMenuScreen(Screen):
     def __init__(self, manager: UIManager, rect: Rect):
@@ -118,6 +120,4 @@ class MainMenuScreen(Screen):
         """
         Change the game state to EXIT
         """
-        state.save_game(True)
-
         state.set_new(EXIT)

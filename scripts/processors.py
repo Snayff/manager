@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 import random
 from typing import TYPE_CHECKING, Type
 
@@ -8,7 +9,7 @@ import pygame
 from scripts import state, ui, world
 from scripts.components import Edicts, Hourglass, Population
 from scripts.demographics import Demographic
-from scripts.constants import BIRTH_RATE, DAYS_IN_YEAR, HOURS_IN_DAY
+from scripts.constants import BIRTH_RATE, DAYS_IN_YEAR, HOURS_IN_DAY, LINE_BREAK
 
 if TYPE_CHECKING:
     from typing import Union, Optional, Any, Tuple, Dict, List
@@ -71,9 +72,11 @@ def process_end_of_day() -> str:
             # update accrued deaths
             demographic.accrued_deaths = accrued_deaths
 
-        # if its the player note the update
-        if kingdom == player_kingdom:
-            update_text = _update
+        # log the change
+        # N.B. not informing the player as they need to take actions to trigger updates
+        name = world.get_name(kingdom)
+        logging.debug(f"{name}'s end of turn: {_update}")
+
 
     # allocate available time
     hourglass = world.get_entitys_component(player_kingdom, Hourglass)
@@ -84,5 +87,9 @@ def process_end_of_day() -> str:
 
     # save the game
     state.save_game(is_auto_save=True)
+
+    # handle empty update
+    if not update_text:
+        update_text = "No news arrives."
 
     return update_text

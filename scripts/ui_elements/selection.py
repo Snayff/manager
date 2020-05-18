@@ -143,6 +143,9 @@ class SelectionScreen(Screen):
         # create an instance of the race and add to the population component
         world.add_component(player_kingdom, Population([demographic()]))
 
+        # update their knowledge
+        world.update_entitys_knowledge(player_kingdom, "population")
+
     def select_land(self, land_name: str):
         """
         Add the land component to the player
@@ -150,6 +153,9 @@ class SelectionScreen(Screen):
         player_kingdom = world.get_player_kingdom()
         land_data = world.get_land_data(land_name)
         world.add_component(player_kingdom, Demesne([Land(**land_data)]))
+
+        # update their knowledge
+        world.update_entitys_knowledge(player_kingdom, "demesne")
 
     def select_name(self, kingdom_name: str):
         """
