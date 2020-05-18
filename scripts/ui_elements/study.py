@@ -3,13 +3,16 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Type
 from scripts import ui, world
 from scripts.components import Edicts
+from scripts.constants import EDICT_COST
 from scripts.ui_elements.screen import Screen
+from pygame_gui import UI_BUTTON_PRESSED
 
 if TYPE_CHECKING:
     from typing import Union, Optional, Any, Tuple, Dict, List
     from pygame_gui import UIManager
     from pygame.rect import Rect
     from pygame.event import Event
+
 
 class StudyScreen(Screen):
     def __init__(self, manager: UIManager, rect: Rect):
@@ -19,8 +22,6 @@ class StudyScreen(Screen):
 
         self.setup_default_screen()
 
-
-
     def handle_event(self, event: Event):
         """
         Handle events
@@ -28,21 +29,29 @@ class StudyScreen(Screen):
         # get the id
         object_id = self.get_object_id(event)
 
-        # check if the message window has been dismissed
-        if "message_window" in object_id:
-            # refresh the screen
-            self.setup_default_screen()
+        # buttons presses
+        if event.user_type == UI_BUTTON_PRESSED:
 
-        #  ensure we didnt select a dodgy option
-        if self.is_option_implemented(object_id):
-            if self.showing == "study":
-                if object_id == "antechamber":
-                    self.call_options_function(object_id)
+            # check if the message window has been dismissed
+            if "message_window" in object_id:
+                # refresh the screen
+                self.setup_default_screen()
 
-                # if the second element of the tuple (possible) is True
-                elif self.options[object_id][1]:
-                    # add the edict
-                    self.toggle_edict(object_id)
+            #  ensure we didnt select a dodgy option
+            if self.is_option_implemented(object_id):
+                if self.showing == "study":
+                    if object_id == "antechamber":
+                        self.call_options_function(object_id)
+
+                    # if the second element of the tuple (possible) is True. set when assigning options.
+                    elif self.options[object_id].func:
+
+                        # add the edict
+                        self.toggle_edict(object_id)
+
+                        # pay for it
+                        player_kingdom = world.get_player_kingdom()
+                        world.spend_daytime(player_kingdom, self.options[object_id].time_cost)
 
     def setup_default_screen(self):
         """
@@ -56,21 +65,21 @@ class StudyScreen(Screen):
 
         # clear options
         self.options = {
-            "antechamber": ("Anteroom - Return", ui.swap_to_antechamber_screen),
+            "antechamber": ui.Option("Anteroom - Return", ui.swap_to_antechamber_screen),
         }
 
         # get possible edicts and set as options
         player_kingdom = world.get_player_kingdom()
         edicts = world.get_entitys_component(player_kingdom, Edicts)
         for edict_name in edicts.known_edicts:
-            edict = world.get_edict(edict_name)
+            edict = world.get_edict(edict_name)(player_kingdom)  # need to init to compare properly
 
             # is it active?
             if edict in edicts.active_edicts:
                 possible = True
                 prefix = "Revoke "
                 description = edict.revoke_description
-            elif edict.is_requirement_met(player_kingdom):
+            elif edict.is_requirement_met(player_kingdom) and world.can_afford_time_cost(player_kingdom, EDICT_COST):
                 # not active but possible
                 possible = True
                 prefix = "Enact "
@@ -80,7 +89,7 @@ class StudyScreen(Screen):
                 prefix = "[Requirement not met]"
                 description = edict.enact_description
 
-            self.options[edict_name] = (prefix + edict_name + " - " + description, possible)
+            self.options[edict_name] = ui.Option(prefix + edict_name + " - " + description, possible, EDICT_COST)
 
         # create the info text
         info_text = "You rifle through your scattered parchments, hearing the crack of old vellum with each wave of "\
@@ -103,7 +112,7 @@ class StudyScreen(Screen):
         player_kingdom = world.get_player_kingdom()
         edicts = world.get_entitys_component(player_kingdom, Edicts)
         edict = world.get_edict(edict_name)
-        edict = edict(owning_entity=player_kingdom)  # This is throwing an unexpected arg error but is right.
+        edict = edict(owning_entity=player_kingdom)  # This is throwing an unexpected arg error but is correct.
 
         if edict in edicts.active_edicts:
             msg = edict.revoke()

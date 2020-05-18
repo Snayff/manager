@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "manager"
+version = "0.0.3"
+description = "A kingdom manager"
+authors = ["Snayff"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+pygame = "^2.0.0dev6"
+pygame-gui = "^0.5.5"
+snecs = "^1.2.1"
+attrs = "^19.3.0"
+
+[tool.poetry.dev-dependencies]
+mypy = "^0.770"
+isort = {version = "^4.3.21", extras = ["pyproject"]}
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"

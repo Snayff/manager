@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 import attr
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING, List, Tuple
 from snecs import RegisteredComponent
-from scripts.constants import MINUTES_IN_DAY
+from scripts.constants import HOURS_IN_DAY
 from scripts.demographics import Demographic
 from scripts.edicts import Edict
 
@@ -111,11 +111,11 @@ class CastleStaff(List[StaffMember], RegisteredComponent):
 
 
 class Hourglass(RegisteredComponent):
-    def __init__(self, minutes_available: int = MINUTES_IN_DAY):
-        self.minutes_available = minutes_available
+    def __init__(self, hours_available: float = HOURS_IN_DAY):
+        self.hours_available: float = hours_available
 
     def serialize(self):
-        return self.minutes_available
+        return self.hours_available
 
     @classmethod
     def deserialize(cls, serialized):
@@ -137,11 +137,11 @@ class Edicts(RegisteredComponent):
     def serialize(self):
         known_dict = {}
         active_dict = {}
-        for edict_name in self.known_edicts:
-            known_dict[edict_name] = edict_name
+        for edict_key in self.known_edicts:
+            known_dict[edict_key] = edict_key
 
         for edict in self.active_edicts:
-            active_dict[edict.name] = attr.asdict(edict)
+            active_dict[edict.key] = attr.asdict(edict)
 
         _dict = {
             "known_edicts": known_dict,
@@ -186,3 +186,29 @@ class Resources(RegisteredComponent):
     @classmethod
     def deserialize(cls, serialized):
         return Resources(**serialized)
+
+
+class Knowledge(RegisteredComponent):
+    """
+    Information received,  what the kingdom knows.
+
+    Populated with duplicate members from other components. This is used to reflect what the Kingdom knows,
+    not the reality. All tuples are (value, day_updated)
+    """
+    def __init__(self):
+        # Resources
+        self.resource_update_day: int = 1
+        self.vittles: int = 0
+        self.wealth: int = 0
+        self.raw_materials: int = 0
+        self.refined_materials: int = 0
+        self.commodities: int = 0
+
+        # Demesne
+        self.demesne_update_day: int = 1
+        self.demesne: List[Land] = []
+
+        # Population
+        self.population_update_day: int = 1
+        self.population: List[Demographic] = []
+

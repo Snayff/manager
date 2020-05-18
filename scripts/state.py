@@ -4,7 +4,6 @@ import json
 import logging
 import os
 from typing import TYPE_CHECKING
-
 from scripts import world
 from scripts.constants import GAME_FPS, MAX_AUTOSAVES, SAVE_PATH
 from scripts.stores.state_data import state_data

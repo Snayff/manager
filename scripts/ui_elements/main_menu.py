@@ -2,16 +2,18 @@ from __future__ import annotations
 
 import os
 from typing import TYPE_CHECKING, Type
+
+from pygame.event import Event
 from scripts import state, ui
-from scripts.components import CastleStaff, Edicts, Hourglass, IsPlayerControlled
+from scripts.components import CastleStaff, Edicts, Hourglass, IsPlayerControlled, Knowledge, Resources
 from scripts.constants import EXIT, SAVE_PATH
 from scripts.ui_elements.screen import Screen
+from pygame_gui import UI_BUTTON_PRESSED
 
 if TYPE_CHECKING:
     from typing import Union, Optional, Any, Tuple, Dict, List
     from pygame.rect import Rect
     from pygame_gui import UIManager
-    import pygame
 
 
 class MainMenuScreen(Screen):
@@ -20,24 +22,21 @@ class MainMenuScreen(Screen):
 
         self.setup_main_menu()
 
-    def handle_event(self, event: pygame.event.Event):
+    def handle_event(self, event: Event):
         """
         Handle events
         """
         # get the id
         object_id = self.get_object_id(event)
 
-        # if we selected a dodgy option, do nothing
-        if not self.is_option_implemented(object_id):
-            return None
-
-        if self.showing == "main_menu":
-            self.call_options_function(object_id)
-        elif self.showing == "load" and object_id == "cancel":
-            self.call_options_function(object_id)
-        elif self.showing == "load":
-            self.init_load_game(object_id)
-
+        # buttons presses
+        if event.user_type == UI_BUTTON_PRESSED:
+            # ensure we didnt select a dodgy option
+            if self.is_option_implemented(object_id):
+                if self.showing == "main_menu" or (self.showing == "load" and object_id == "cancel"):
+                    self.call_options_function(object_id)
+                elif self.showing == "load":
+                    self.init_load_game(object_id)
 
     def setup_main_menu(self):
         """
@@ -51,10 +50,10 @@ class MainMenuScreen(Screen):
 
         # set options
         self.options = {
-            "new_game": ("New game", self.init_new_game),
-            "init_load_game": ("Load game", self.setup_load_game),
-            "settings": ("* Settings", None),
-            "exit_game": ("Exit game", self.exit_game)
+            "new_game": ui.Option("New game", self.init_new_game),
+            "init_load_game": ui.Option("Load game", self.setup_load_game),
+            "settings": ui.Option("* Settings", None),
+            "exit_game": ui.Option("Exit game", self.exit_game)
         }
 
         # create the screen
@@ -75,14 +74,14 @@ class MainMenuScreen(Screen):
         self.showing = "load"
 
         self.options = {
-            "cancel": ("Go Back", self.setup_main_menu),
+            "cancel": ui.Option("Go Back", self.setup_main_menu),
         }
 
         saves = {}
         # get all save files as options
         for filename in os.listdir(os.getcwd() + "/" + SAVE_PATH):
             filename = filename.replace(".json", "")  # cant have the . in the object id
-            saves[filename] = (filename, None)
+            saves[filename] = ui.Option(filename, None)
 
         # sort saves
         for key, value in sorted(saves.items()):
@@ -99,15 +98,11 @@ class MainMenuScreen(Screen):
         """
         Create new game data and swap to selection screen
         """
+        # TODO - clear world
+
         # create the player entity
-        components = [
-            IsPlayerControlled(),
-            CastleStaff([]),
-            Hourglass(),
-            Edicts(["conscription"])
-        ]
         from scripts import world
-        player_kingdom = world.create_entity(components)
+        player_kingdom = world.create_kingdom()
 
         ui.swap_to_selection_screen()
 
@@ -123,4 +118,6 @@ class MainMenuScreen(Screen):
         """
         Change the game state to EXIT
         """
+        state.save_game(True)
+
         state.set_new(EXIT)

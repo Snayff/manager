@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Type
 from scripts import processors, ui
 from scripts.ui_elements.screen import Screen
+from pygame_gui import UI_BUTTON_PRESSED
 
 if TYPE_CHECKING:
     from typing import Union, Optional, Any, Tuple, Dict, List
@@ -27,10 +28,17 @@ class AntechamberScreen(Screen):
         # get the id
         object_id = self.get_object_id(event)
 
-        #  ensure we didnt select a dodgy option
-        if self.is_option_implemented(object_id):
-            self.call_options_function(object_id)
+        # buttons presses
+        if event.user_type == UI_BUTTON_PRESSED:
 
+            # check if the message window has been dismissed
+            if "message_window" in object_id:
+                # refresh the screen
+                self.setup_default_screen()
+
+            #  ensure we didnt select a dodgy option
+            if self.is_option_implemented(object_id):
+                self.call_options_function(object_id)
 
     def setup_default_screen(self):
         """
@@ -43,15 +51,15 @@ class AntechamberScreen(Screen):
         self.showing = "antechamber"
 
         self.options = {
-            "council": ("Council Room - Meet with your council", ui.swap_to_council_screen),
-            "host": ("*Throne Room - Host petitioners", None),
-            "search": ("*Cartographer's Display - Search for new lands", None),
-            "edict": ("Study - Proclaim an edict", ui.swap_to_study_screen),
-            "military": ("*Cartographer's Display - Military action", None),
-            "construction": ("*Rookery - Demand construction", None),
-            "diplomats": ("*Rookery - Instruct diplomats", None),
-            "spy": ("*Rookery - Spy Network", None),
-            "end_day": ("Chambers - End the day", processors.process_end_of_day)
+            "council": ui.Option("Council Room - Meet with your council", ui.swap_to_council_screen),
+            "host": ui.Option("*Throne Room - Host petitioners", None),
+            "search": ui.Option("*Cartographer's Display - Search for new lands", None),
+            "edict": ui.Option("Study - Proclaim an edict", ui.swap_to_study_screen),
+            "military": ui.Option("*Cartographer's Display - Military action", None),
+            "construction": ui.Option("*Rookery - Demand construction", None),
+            "diplomats": ui.Option("*Rookery - Instruct diplomats", None),
+            "spy": ui.Option("*Rookery - Spy Network", None),
+            "end_day": ui.Option("Chambers - End the day", self.end_day)
         }
         # TODO - combine duplicate instructions
 
@@ -61,3 +69,10 @@ class AntechamberScreen(Screen):
                                    self.button_height, self.option_text_width, self.max_section_height)
         self.create_choice_field(allowed_str=False)
         self.create_hourglass_display()
+
+    def end_day(self):
+        """
+        Trigger the processors and refresh the screen
+        """
+        update = processors.process_end_of_day()
+        self.create_message(update, "A New Day Dawns")

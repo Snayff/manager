@@ -5,6 +5,7 @@ from scripts import ui, world
 from scripts.components import Details, Land, Demesne, Population
 from scripts.constants import LINE_BREAK
 from scripts.ui_elements.screen import Screen
+from pygame_gui import UI_BUTTON_PRESSED, UI_TEXT_ENTRY_FINISHED
 
 if TYPE_CHECKING:
     from typing import Union, Optional, Any, Tuple, Dict, List
@@ -31,20 +32,24 @@ class SelectionScreen(Screen):
         # get the id
         object_id = self.get_object_id(event)
 
-        # doesnt need object id
-        if self.showing == "name":
-            self.select_name(event.text)
-            ui.swap_to_antechamber_screen()
+        # text entry:
+        if event.user_type == UI_TEXT_ENTRY_FINISHED:
+            # doesnt need object id
+            if self.showing == "name":
+                self.select_name(event.text)
+                ui.swap_to_antechamber_screen()
 
-        # ensure we didnt select a dodgy option
-        if self.is_option_implemented(object_id):
-            # possible options, in reverse order to prevent selection being applicable to more than one
-            if self.showing == "race":
-                self.select_race(object_id)
-                self.setup_select_land()
-            elif self.showing == "land":
-                self.select_land(object_id)
-                self.setup_select_kingdom_name()
+        # buttons presses
+        if event.user_type == UI_BUTTON_PRESSED:
+            # ensure we didnt select a dodgy option
+            if self.is_option_implemented(object_id):
+                # possible options, in reverse order to prevent selection being applicable to more than one
+                if self.showing == "race":
+                    self.select_race(object_id)
+                    self.setup_select_land()
+                elif self.showing == "land":
+                    self.select_land(object_id)
+                    self.setup_select_kingdom_name()
 
     ############################ SETUP ##############################
 
@@ -64,7 +69,7 @@ class SelectionScreen(Screen):
         # get races
         races = world.get_all_demographics()
         for key, race in races.items():
-            self.options[key] = (f"{str(race.initial_amount)} {race.name}s from {race.homeworld}.", None)
+            self.options[key] = ui.Option(f"{str(race.initial_amount)} {race.name}s from {race.homeworld}.", None)
 
         # create the screen
         self.create_header(self.header_text)
@@ -92,7 +97,7 @@ class SelectionScreen(Screen):
         # create lands
         lands = world.get_all_land_data()
         for key, land in lands.items():
-            self.options[key] = (f"The {land['size']} {land['terrain']} place known as {land['name']}.", None)
+            self.options[key] = ui.Option(f"The {land['size']} {land['terrain']} place known as {land['name']}.", None)
 
         # create the screen
         self.create_header(self.header_text)
@@ -110,6 +115,8 @@ class SelectionScreen(Screen):
         """
         # clear existing elements
         self.kill()
+
+        self.options = {}
 
         # set the flag
         self.showing = "name"

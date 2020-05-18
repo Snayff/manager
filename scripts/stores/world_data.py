@@ -3,7 +3,8 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING, Type
 
-from scripts.demographics import Demographic, Goblin, Shoom
+from scripts.constants import AVERAGE, LARGE, SMALL
+from scripts.demographics import Demographic, Goblin, Pan, Shoom
 from scripts.edicts import Conscription, Edict
 
 if TYPE_CHECKING:
@@ -18,22 +19,25 @@ class _WorldDataStore:
         # static values
         self.races: Dict[str, Type[Demographic]] = self._load_race_values()
         self.lands: Dict[str, Dict[str, str]] = self._load_land_values()
+        self.land_sizes: Dict[str, float] = self._load_land_size_modifiers()
         self.edicts: Dict[str, Type[Edict]] = self._load_edicts()
 
         # volatile info
         self.days_passed: int = 1
+        self.calendar: Dict[str, List] = {}
 
         logging.info(f"_WorldDataStore initialised.")
 
     ######################## LOAD VALUES ########################
-
+    # TODO - move data to definitions module
     def _load_race_values(self) -> Dict[str, Type[Demographic]]:
         """
         Set the initial race values
         """
         races = {
             "goblin": Goblin,
-            "shoom": Shoom
+            "shoom": Shoom,
+            "pan": Pan
         }
 
         return races
@@ -47,13 +51,13 @@ class _WorldDataStore:
                 "key": "black_moors",
                 "name": "Black Moors",
                 "terrain": "grassland",
-                "size": "small"
+                "size": SMALL
             },
             "the_grove": {
                 "key": "the_grove",
                 "name": "The Grove",
                 "terrain": "woods",
-                "size": "medium"
+                "size": AVERAGE
             }
         }
         return lands
@@ -65,6 +69,17 @@ class _WorldDataStore:
         }
 
         return edicts
+
+    def _load_land_size_modifiers(self) -> Dict[str, float]:
+        """
+        Load the modifiers for each land size
+        """
+        sizes = {
+            SMALL: 0.5,  # small worth half of average
+            AVERAGE: 1.0,  # the default size
+            LARGE: 2.0
+        }
+        return sizes
 
 
 world_data = _WorldDataStore()

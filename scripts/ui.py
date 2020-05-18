@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-import logging
-from typing import TYPE_CHECKING
-
 import pygame
+import logging
+from collections import namedtuple
+from typing import TYPE_CHECKING
 from pygame.rect import Rect
 from scripts.constants import BASE_WINDOW_HEIGHT, BASE_WINDOW_WIDTH
 from scripts.stores.ui_data import ui_data
@@ -12,6 +12,10 @@ from scripts.ui_elements.study import StudyScreen
 
 if TYPE_CHECKING:
     pass
+
+######################## HELPFUL OBJECTS###############################
+
+Option = namedtuple("Option", "text, func, time_cost", defaults=[0])
 
 
 ######################## CORE FUNCTIONALITY - NEEDED TO RUN ###############################

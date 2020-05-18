@@ -5,8 +5,8 @@ from typing import TYPE_CHECKING, Type, TypeVar
 from snecs import Component, Query, new_entity
 from snecs.typedefs import EntityID
 from scripts import debug
-from scripts.components import Details, Edicts, IsPlayerControlled
-from scripts.constants import DAYS_IN_SEASON, DAYS_IN_YEAR, SEASONS_IN_YEAR
+from scripts.components import CastleStaff, Details, Edicts, Hourglass, IsPlayerControlled, Knowledge, Resources
+from scripts.constants import BIRTH_RATE, DAYS_IN_SEASON, DAYS_IN_YEAR, SEASONS_IN_YEAR
 from scripts.demographics import Demographic
 from scripts.edicts import Edict
 from scripts.stores.world_data import world_data
@@ -40,6 +40,24 @@ def create_entity(components: List[Component] = None) -> EntityID:
     entity = new_entity(_components)
 
     return entity
+
+
+def create_kingdom() -> EntityID:
+    """
+    Create a basic kingdom with empty components
+    """
+    default_components = [
+        IsPlayerControlled(),
+        CastleStaff([]),
+        Hourglass(),
+        Edicts(["conscription"]),
+        Knowledge(),
+        Resources()
+    ]
+
+    kingdom = create_entity(default_components)
+
+    return kingdom
 
 
 ############################# GET - RETURN AN EXISTING SOMETHING ###########################
@@ -136,10 +154,24 @@ def get_modified_stat(entity: EntityID, stat: str, base_value: Union[int, float]
     environment = {stat: base_value}
 
     for edict in edicts.active_edicts:
-        if "birth_rate" in edict.affects:
+        if BIRTH_RATE in edict.affects:
             edict.apply(environment)
 
     return environment[stat]
+
+
+def get_land_size_modifier(size: str) -> float:
+    """
+    Get the numeric modifier value from the size string
+    """
+    return world_data.land_sizes[size]
+
+
+def get_days_since(day: int) -> int:
+    """
+    Get the number of days since the day given
+    """
+    return world_data.days_passed - day
 
 
 ################################ SET - AMEND AN EXISTING SOMETHING ###############################
@@ -151,6 +183,16 @@ def set_days_passed(days_passed: int):
     world_data.days_passed = days_passed
 
 
+################################ CHECKS - RETURN BOOL ###############################
+
+def can_afford_time_cost(entity: EntityID, hours_to_spend: float = 1.0):
+    hourglass = get_entitys_component(entity, Hourglass)
+    if hourglass.hours_available > hours_to_spend:
+        return True
+    else:
+        return False
+
+
 ################################ ACTIONS - CHANGE STATE - RETURN NOTHING ###############################
 
 def add_component(entity: EntityID, component: Component):
@@ -160,8 +202,13 @@ def add_component(entity: EntityID, component: Component):
     snecs.add_component(entity, component)
 
 
-def pass_days(days: int = 1):
+def progress_days(days: int = 1):
     """
     Move time forwards by days
     """
     world_data.days_passed += days
+
+
+def spend_daytime(entity: EntityID, hours_spent: float = 1):
+    hourglass = get_entitys_component(entity, Hourglass)
+    hourglass.hours_available = max(0.0, hourglass.hours_available - hours_spent)
