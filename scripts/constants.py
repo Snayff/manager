@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Type
 if TYPE_CHECKING:
     from typing import Union, Optional, Any, Tuple, Dict, List
 
-VERSION = "0.0.3"
+VERSION = "0.4.0"
 
 # save data
 SAVE_PATH = "saves/"
